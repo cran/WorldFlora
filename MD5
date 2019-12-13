@@ -1,0 +1,9 @@
+93a91ae1164d41069b6367e068c33600 *DESCRIPTION
+6db2ee27dc41796ad0905b72326770d0 *NAMESPACE
+3db296782aaca8b1a15e5dc50a256bc4 *R/WFO.match.R
+2760bf770490db2ee2eeeddf62f88542 *R/zzz.R
+738e35c5de9803a74ff25048e26db2b2 *data/WFO.example.RData
+a257a36e0aa89ad7620e5cdfc49ae6b1 *inst/ChangeLog
+e531c93ab3a454910642c1e187fbc2c7 *inst/etc/WFO.example.xlsx
+67b98916c94cada219b6eb7dc9c0c2d5 *man/WFO.example.Rd
+b101b19e28a37f98dbebca4e38ea14f2 *man/WFO.match.Rd

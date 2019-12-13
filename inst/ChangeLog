@@ -1,0 +1,14 @@
+
+WorldFlora versions
+
+	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
+	http://www.worldfloraonline.org/downloadData
+
+	The suggested citation of the World Flora Online (WFO) is:
+	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet; 
+	http://www.worldfloraonline.org. Accessed on:[Date]".
+
+Version 1.0 (December 2019)
+
+	* Package developed and submitted to CRAN
+
