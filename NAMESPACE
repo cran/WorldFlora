@@ -1,4 +1,4 @@
 
-export(WFO.match, .onAttach)
+export(WFO.match, WFO.url, .onAttach)
 
 

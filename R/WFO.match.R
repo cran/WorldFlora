@@ -3,7 +3,15 @@ WFO.match <- function(
     spec.name="spec.name", Genus="Genus", Species="Species", 
     Infraspecific.rank="Infraspecific.rank", Infraspecific="Infraspecific",
     acceptedNameUsageID.match=TRUE,
-    Fuzzy=0.001, Fuzzy.shortest=TRUE, Fuzzy.within=FALSE,
+    Fuzzy=0.1, Fuzzy.force=FALSE, Fuzzy.max=250, Fuzzy.min=TRUE, Fuzzy.shortest=FALSE, Fuzzy.within=FALSE,
+    spec.name.tolower=FALSE, spec.name.nonumber=TRUE,
+    exclude.infraspecific=FALSE, 
+    infraspecific.excluded=c("cultivar.", "f.", "sect.", "subf.", "subg.", "subsp.", "subvar.", "var", "var."),
+    spec.name.sub=TRUE, 
+    sub.pattern=c(" sp[.] A", " sp[.] B", " sp[.] C", " sp[.]", " spp[.]", " pl[.]", " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]", 
+        " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", 
+        "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", " nom[.] inval[.]", " nom[.] nov[.]", 
+        " nom[.] nud[.]", " nom[.] obl[.]", " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),
     verbose=FALSE, counter=1000
 )
 {
@@ -17,16 +25,65 @@ WFO.match <- function(
         WFO.data <- data.table::fread(WFO.file, encoding="UTF-8")
     }
 
-    spec.data$Matched <- spec.data$Unique <- rep(as.logical(1), nrow(spec.data))
-    spec.data$Fuzzy <- rep(as.logical(0), nrow(spec.data))
-    spec.data$Subseq <- rep(1, nrow(spec.data))
-    init.column <- ncol(spec.data)
+    WFO.names <- names(WFO.data)
+    WFO.names <- c(WFO.names, "Hybrid")
+    if (acceptedNameUsageID.match == TRUE) {WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name")}
+    for (i in 1:length(WFO.names)) {
+        if (WFO.names[i] %in% names(spec.data)) {
+            message(paste("Original data set variable '", WFO.names[i], "' replaced by variable '", WFO.names[i], ".ORIG'", sep=""))
+            names(spec.data)[names(spec.data) == WFO.names[i]] <- paste(WFO.names[i], ".ORIG", sep="")
+        }
+    }
 
-    if (spec.name %in% names(spec.data)) {spec.data[, spec.name] <- as.character(spec.data[, spec.name])}
+    if (spec.name %in% names(spec.data)) {
+        spec.data[, spec.name] <- as.character(spec.data[, spec.name])
+        if (spec.name.tolower == TRUE) {
+            spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+            spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            spec.data[, spec.name] <- tolower(spec.data[, spec.name.ORIG])
+            for (i in 1:nrow(spec.data)) {
+                substr(spec.data[i, spec.name], start=1, stop=1) <- toupper(substr(spec.data[i, spec.name], start=1, stop=1)) 
+            }
+        }
+        if (spec.name.sub == TRUE) {
+            if (spec.name.tolower == FALSE) {
+                spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+                spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            }
+            for (i in 1:length(sub.pattern)) {
+                spec.data[, spec.name] = gsub(pattern=sub.pattern[i], replacement="", x=spec.data[, spec.name])
+            }
+        }
+        if (spec.name.nonumber == TRUE) {
+            if (spec.name.tolower == FALSE && spec.name.sub == FALSE) {
+                spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+                spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            }
+            spec.data$Number.detected <- rep(as.logical(0), nrow(spec.data))
+            for (i in 1:nrow(spec.data)) {
+                species.string <- spec.data[i, spec.name]        
+                if (grepl("^[[:digit:]]", substr(species.string, start=nchar(species.string), stop=nchar(species.string))) == TRUE) {
+                    spec.data[i, "Number.detected"] <- as.logical(1)
+                    species.new.string <- unlist(strsplit(species.string, split=" "))[1]
+                    while (grepl("^[[:digit:]]", substr(species.new.string, start=nchar(species.new.string), stop=nchar(species.new.string))) == TRUE){
+                         species.new.string <- substr(species.new.string, start=1, stop=nchar(species.new.string)-1)
+                    }
+                    spec.data[i, spec.name] <- species.new.string
+                }
+            }
+        }
+    }
+
     if (Genus %in% names(spec.data)) {spec.data[, Genus] <- as.character(spec.data[, Genus])}
     if (Species %in% names(spec.data)) {spec.data[, Species] <- as.character(spec.data[, Species])}
     if (Infraspecific.rank %in% names(spec.data)) {spec.data[, Infraspecific.rank] <- as.character(spec.data[, Infraspecific.rank])}
     if (Infraspecific %in% names(spec.data)) {spec.data[, Infraspecific] <- as.character(spec.data[, Infraspecific])}
+
+    spec.data$Matched <- spec.data$Unique <- rep(as.logical(1), nrow(spec.data))
+    spec.data$Fuzzy <- rep(as.logical(0), nrow(spec.data))
+    spec.data$Fuzzy.dist <- rep(NA, nrow(spec.data))
+    spec.data$Subseq <- rep(1, nrow(spec.data))
+    init.column <- ncol(spec.data)
 
     if (Infraspecific.rank %in% names(spec.data)) {
         for (i in 1:nrow(spec.data)) {
@@ -47,16 +104,26 @@ WFO.match <- function(
 
         if (round(i/counter, 0) == i/counter) {message(paste("Reached record # ", i, sep=""))}
 
+        fuzzy.matches <- FALSE
+
         if (spec.name %in% names(spec.data)) {
-            WFO.match <- WFO.data[WFO.data$scientificName==spec.data[i, spec.name],]        
-            if (nrow(WFO.match) == 0 && Fuzzy > 0) {
+            WFO.match <- WFO.data[WFO.data$scientificName==spec.data[i, spec.name],]
+            if ((nrow(WFO.match) == 0 && Fuzzy > 0) || Fuzzy.force == TRUE) {
                 specFuzzy <- agrep(spec.data[i, spec.name], x=WFO.data$scientificName, value=T, max.distance=Fuzzy)
+
+                if (length(specFuzzy) > Fuzzy.max) {
+                    message(paste("Too many (", length(specFuzzy), ") fuzzy matches for ", spec.data[i, spec.name], sep=""))
+                    specFuzzy <- NULL
+                }
+
                 if (length(specFuzzy) > 0) {
                     spec.data[i, "Fuzzy"] <- as.logical(1)
+                    fuzzy.matches <- TRUE
                     specFuzzy <- unique(specFuzzy)
                     if (verbose == TRUE) {message(paste("Fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
-                    if (Fuzzy.within == T) {
-                        Fuzzy.shortest <- as.logical(0)
+                    
+                    if (Fuzzy.within == TRUE) {
+                        Fuzzy.shortest <- Fuzzy.min <- FALSE
                         within.matches <- grepl(spec.data[i, spec.name], x=specFuzzy)
                         specFuzzy <- specFuzzy[within.matches]
                         if (verbose == T) {
@@ -67,13 +134,19 @@ WFO.match <- function(
                             }
                         }
                     }
-                    if (Fuzzy.shortest == TRUE) {
+                    if (Fuzzy.min == TRUE  && length(specFuzzy) > 1) {
+                        Fuzzy.shortest <- FALSE
+                        Fuzzy.dist <- as.numeric(utils::adist(specFuzzy, y=spec.data[i, spec.name]))
+                        target.l <- min(Fuzzy.dist)
+                        specFuzzy <- specFuzzy[Fuzzy.dist == target.l]
+                        if (verbose == TRUE) {message(paste("Best fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
+                    }
+                    if (Fuzzy.shortest == TRUE && length(specFuzzy) > 1) {
                         target.l <- nchar(spec.data[i, spec.name])
                         found.l <- nchar(specFuzzy)
                         found.diff <- abs(found.l - target.l)
                         specFuzzy <- specFuzzy[found.diff == min(found.diff)]
-                           if (verbose == TRUE) {message(paste("Shortest fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
-
+                        if (verbose == TRUE) {message(paste("Shortest fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
                     }
                     for (j in 1:length(specFuzzy)) {
                         WFO.match1 <- WFO.data[WFO.data$scientificName==specFuzzy[j],]
@@ -82,9 +155,9 @@ WFO.match <- function(
                         }else{
                             WFO.match <- rbind(WFO.match, WFO.match1)
                         }
+                    }
                 }
             }
-        }
 #
 # Only match genus and species separately if specName was not given
         }else{
@@ -94,10 +167,13 @@ WFO.match <- function(
             }else if (Infraspecific %in% names(spec.data)) {
                 WFO.match <- WFO.data[WFO.data$genus==spec.data[i, Genus] & WFO.data$specificEpithet==spec.data[i, Species] 
                     & WFO.data$infraspecificEpithet==spec.data[i, Infraspecific], ]
-            }else{
+            }else if (Species %in% names(spec.data)){
                 WFO.match <- WFO.data[WFO.data$genus==spec.data[i, Genus] & WFO.data$specificEpithet==spec.data[i, Species], ]
+            }else {
+                WFO.match <- WFO.data[WFO.data$genus==spec.data[i, Genus], ]
             }
         }
+
         if (nrow(WFO.match) > 1) {
             spec.data[i, "Unique"] <- as.logical(0)
             WFO.match2 <- cbind(spec.data[rep(i, nrow(WFO.match)), ], WFO.match)
@@ -109,18 +185,35 @@ WFO.match <- function(
             WFO.match2 <- cbind(spec.data[i, ], WFO.empty)
         }
 
+# Need to calculate distance again as some repetition in scientificName (eg Agave mitis)
+        if (fuzzy.matches == TRUE) {
+            for (j in 1:nrow(WFO.match2)) {
+                WFO.match2[j, "Fuzzy.dist"] <- as.numeric(utils::adist(WFO.match2[j, "scientificName"], y=spec.data[i, spec.name]))
+            }
+        }
+
         if (i==1) {
             WFO.out <- WFO.match2
         }else{
             WFO.out <- rbind(WFO.out, WFO.match2)
         }
     }
+
+    if (exclude.infraspecific == TRUE) {
+        keep.rows <- rep(as.logical(1), nrow(WFO.out))
+        for (i in 1:nrow(WFO.out)) {
+            if (WFO.out[i, "verbatimTaxonRank"] %in% infraspecific.excluded) {keep.rows[i] <- as.logical(0)}
+        }
+        WFO.out <- WFO.out[keep.rows, ]
+    }
+
 # check for hybrids
     WFO.out$Hybrid <- rep("", nrow(WFO.out))
     for (i in 1:nrow(WFO.out)) {
         if (grepl(intToUtf8(215), WFO.out[i, "scientificName"])) {WFO.out[i, "Hybrid"] <- intToUtf8(215)}
     }
-    if (acceptedNameUsageID.match==T) {
+
+    if (acceptedNameUsageID.match == TRUE) {
         message(paste("\n", "Checking new accepted IDs"))
         right.columns <- c((init.column+1) : (ncol(WFO.out)-1))
         WFO.out$New.accepted <- rep(as.logical(0), nrow(WFO.out))
@@ -151,9 +244,16 @@ WFO.match <- function(
             }
         }
     }
+
+    if (exclude.infraspecific == TRUE) {
+        keep.rows <- rep(as.logical(1), nrow(WFO.out))
+        for (i in 1:nrow(WFO.out)) {
+            if (WFO.out[i, "verbatimTaxonRank"] %in% infraspecific.excluded) {keep.rows[i] <- as.logical(0)}
+        }
+        WFO.out <- WFO.out[keep.rows, ]
+    }
+
 #    if (is.null(filename) == FALSE) {utils::write.table(WFO.out, file=filename, quote=F, sep="\t", row.names=F, append=append)}
     return(WFO.out)
 }
-
-
 

@@ -8,6 +8,38 @@ WorldFlora versions
 	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet; 
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
+
+Version 1.1 (15 December 2019)
+
+	* New function WFO.url that creates urls for matched plant names, with an option to
+	open a selection of urls in an HTML browser.
+
+	* It is possible now to only match the Genus name.
+
+	* New argument 'Fuzzy.force' to always use Fuzzy matching, even when an exact match
+	was found for the spec.name.
+
+	* New argument 'Fuzzy.max' to limit the number of fuzzy matches.
+
+	* New argument 'Fuzzy.min' to limit the fuzzy matches to those with the smallest
+	Levenshtein distance.
+
+	* Output from function WFO.match gives the Levenshtein distance for fuzzy matches.
+
+	* New argument spec.name.tolower that changes submitted species names to lower case
+	characters, except the first character
+
+	* New argument spec.name.nonumber that interpretes submitted names as unidentified
+	species and seeks matches at generic level
+
+	* New argument exclude.infraspecific that removes matched records with the specified
+	infraspecific levels. Note that these matched records are removed both from matched 
+	plant names (including synonyms) and matched accepted plant names (excluding 
+	synonyms)
+
+	* New argument spec.name.sub that removes sections in the submitted plant name
+
+
 Version 1.0 (December 2019)
 
 	* Package developed and submitted to CRAN
