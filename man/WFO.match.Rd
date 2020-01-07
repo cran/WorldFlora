@@ -1,6 +1,7 @@
 \name{WFO.match}
 \alias{WFO.match}
 \alias{WFO.url}
+\alias{WFO.one}
 
 \title{Standardize plant names according to World Flora Online taxonomic backbone}
 
@@ -12,10 +13,12 @@ This package checks a list of species against the World Flora Online (WFO) taxon
     WFO.match(spec.data = NULL, WFO.file = NULL, WFO.data = NULL,
         spec.name = "spec.name", Genus = "Genus", Species = "Species", 
         Infraspecific.rank = "Infraspecific.rank", Infraspecific = "Infraspecific",
+        Authorship = "Authorship",
         acceptedNameUsageID.match = TRUE,
         Fuzzy = 0.1, Fuzzy.force = FALSE, Fuzzy.max = 250, Fuzzy.min = TRUE, 
         Fuzzy.shortest = FALSE, Fuzzy.within = FALSE,
-        spec.name.tolower = FALSE, spec.name.nonumber = TRUE,
+        Fuzzy.two = TRUE, Fuzzy.one = TRUE,
+        spec.name.tolower = FALSE, spec.name.nonumber = TRUE, spec.name.nobrackets = TRUE,
         exclude.infraspecific = FALSE, 
         infraspecific.excluded = c("cultivar.", "f.", "sect.", "subf.", "subg.", 
             "subsp.", "subvar.", "var", "var."),
@@ -27,29 +30,38 @@ This package checks a list of species against the World Flora Online (WFO) taxon
             "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", 
             " nom[.] inval[.]", " nom[.] nov[.]", " nom[.] nud[.]", " nom[.] obl[.]", 
             " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),
-        verbose = FALSE, counter = 1000)
+        verbose = TRUE, counter = 1000)
 
     WFO.url(WFO.result = NULL, browse = FALSE, browse.rows = c(1:1), ...)
+
+    WFO.one(WFO.result = NULL, priority = "Accepted", 
+        spec.name = NULL, Auth.dist = NULL,
+        verbose = TRUE, counter = 1000)
+
 }
 
 \arguments{
   \item{spec.data}{ A data.frame containing variables with species names. In case that a character vector is provided, then this vector will be converted to a data.frame }
   \item{WFO.file}{ File name of the static copy of the Taxonomic Backbone. If not \code{NULL}, then data will be reloaded from this file.}
   \item{WFO.data}{ Data set with the static copy of the Taxonomic Backbone. Ignored if \code{WFO.file} is not \code{NULL}. }
-  \item{spec.name}{ Name of the column with taxonomic names. In case that a \code{spec.name} is provided, then separate genus and species names will be ignored.}
+  \item{spec.name}{ Name of the column with taxonomic names. In case that a \code{spec.name} is provided, then separate genus and species names will be ignored. For function \code{WFO.one}, giving the name for this columns results in copying a submitted but unmatched plant name into the \code{scientificName} of the results.}
   \item{Genus}{ Name of the column with the genus names. }
   \item{Species}{ Name of the column with the species names. }
-  \item{Infraspecific.rank}{ Name of the column with the infraspecific rank (such as subsp., var. or cultivar.). }
+  \item{Infraspecific.rank}{ Name of the column with the infraspecific rank (such as "subsp.", "var." or "cultivar."). }
   \item{Infraspecific}{ Name of the column with the infraspecific names. }
+  \item{Authorship}{ Name of the column with the naming authorities. }
   \item{acceptedNameUsageID.match}{ If \code{TRUE}, obtain the accepted name and others details from the earlier acceptedNameUsageID. }
   \item{Fuzzy}{ If larger than 0, then attempt fuzzy matching in case an identifical taxonomic name is not found in the World Flora Online. This argument will be used as argument \code{max.distance} in the internally called \code{\link[base]{agrep}}. Note that fuzzy matching is only possible for the \code{spec.name}.  }
   \item{Fuzzy.force}{ If \code{TRUE}, always use the fuzzy matching algorithm, even when the \code{spec.name} was matched exactly. }
   \item{Fuzzy.max}{ Maximum number of fuzzy matches. }
   \item{Fuzzy.min}{ If \code{TRUE}, limit the matching of names to those with the smallest Levenshtein distance, calculated via {\link[utils]{adist}}. }
-  \item{Fuzzy.shortest}{ If \code{TRUE}, limit the matching of names to those with the most similar length of characters (this feature is expected to eliminate matches at infraspecific levels, see examples)). }
+  \item{Fuzzy.shortest}{ If \code{TRUE}, limit the matching of names to those with the most similar length of characters (this feature is expected to eliminate matches at infraspecific levels, see examples). }
   \item{Fuzzy.within}{ If \code{TRUE}, limit the matching of names to those that contain exactly the submitted plant name (this feature is expected to be useful when submitting plant names that only contain a subset of the first characters of the species name, in order to check for best matches manually afterwards). }
+  \item{Fuzzy.two}{ If \code{TRUE}, in case that there were no fuzzy matches, limit the terms to be matched to the first two (these are expected to be genus and species names). }
+  \item{Fuzzy.one}{ If \code{TRUE}, in case that there were no fuzzy matches, limit the terms to be matched to the first one (expected to be the genus name). }
   \item{spec.name.tolower}{ If \code{TRUE}, then convert all characters of the \code{spec.name} to lower case via {\link[base]{tolower}}. }
   \item{spec.name.nonumber}{ If \code{TRUE}, then submitted \code{spec.name} that contain numbers will be interpreted as genera, only matching the first word. }
+  \item{spec.name.nobrackets}{ If \code{TRUE}, then submitted \code{spec.name} then sections of the submitted name after '(' will be removed. Note that this will also remove sections after ')', such as authorities for plant names that are in a separate column of WFO.  }
   \item{exclude.infraspecific}{ If \code{TRUE}, then exclude records that contain the infraspecific levels defined by \code{infraspecific.excluded}. }
   \item{infraspecific.excluded}{ Infraspecific levels (available from column 'verbatimTaxonRank') excluded in the results. Note that levels are excluded both in direct matches and matches with the accepted name. }
   \item{spec.name.sub}{ If \code{TRUE}, then delete sections of the \code{spec.name} that match the \code{sub.pattern}. }
@@ -59,12 +71,16 @@ This package checks a list of species against the World Flora Online (WFO) taxon
 
   \item{WFO.result}{ Result obtained via {\link[WorldFlora]{WFO.match}}. }
   \item{browse}{ If \code{TRUE}, then browse urls specified by \code{browse.rows}. }  
-  \item{browse.rows}{ Indeces of row with the urls to be browsed. }
+  \item{browse.rows}{ Indices of row with the urls to be browsed. }
   \item{...}{ Other arguments for {\link[utils]{browseURL}}. }
+
+  \item{priority}{ Method of selecting the 1-to-1 matches. Option \code{Accepted} first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Option \code{Synonym} first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. }
+  \item{Auth.dist}{ In case that the name of the variable with the Levenshtein distance between the authorship names is provided, then the algorithm first prioritizes records with the best match between the submitted and matched author names. }
+
 }
 
 \details{
-The function matches plant names. Columns retrieved from the World Flora Online are added to the provided input data.frame. In case that there are multiple matches, then rows from the input data.frame are repeated.
+The principal function (\code{WFO.match}) matches plant names. Columns retrieved from the World Flora Online are added to the provided input data.frame. In case that there are multiple matches, then rows from the input data.frame are repeated.
 
 Column 'Unique' shows whether there was a unique match (or not match) in the WFO.
 
@@ -73,6 +89,8 @@ Column 'Matched' shows whether there was a match in the WFO.
 Column 'Fuzzy' shows whether matching was done by the fuzzy method.
 
 Column 'Fuzzy.dist' gives the Levenshtein distance calculated between submitted and matched plant names {\link[utils]{adist}}.
+
+Column 'Auth.dist' gives the Levenshtein distance calculated between submitted and matched authorship names, if the former were provided {\link[utils]{adist}}.
 
 Column 'Subseq' gives different numbers for different matches for the same plant name.
 
@@ -88,6 +106,11 @@ Column 'Old.name' gives the name of the first match with the non-blank acceptedN
 
 
 The function was inspired on the \code{Taxonstand} package that matches plant names against The Plant List. Note that The Plant List has been static since 2013, but was used as the starting point for the Taxonomic Backbone of the World Flora Online. 
+
+Function \code{WFO.one} finds one unique matching name for each submitted name. Via \code{priority = "Accepted"}, it first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Via \code{priority = "Synonym"}, it first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. When a \code{spec.name} is given to \code{WFO.one}, the original submitted name is inserted for the code{scientificName}.
+
+When the user specifies the column with the \code{Auth.dist}, documenting the Levenshtein
+distance between the submitted and matched authorities, then \code{WFO.one} first prioritizes records with best match between Authorities.
 }
 
 \value{
@@ -114,11 +137,16 @@ spec.test <- data.frame(spec.name=c("Faidherbia albida", "Acacia albida",
 WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
 
 # Show all the fuzzy matches, which included those at infraspecifc level
-WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, 
+e1 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, 
     Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
+e1
+
+# Use function WFO.one for a 1-to-1 match between submitted and matched names
+WFO.one(e1)
 
 # Hybrid species
 WFO.match("Arabis divaricarpa", WFO.data=WFO.example)
+WFO.match("Arabis x divaricarpa", WFO.data=WFO.example)
 
 # Convert capitals to lower case
 WFO.match("FAIDHERBIA ALBIDA", WFO.data=WFO.example, spec.name.tolower=TRUE)
@@ -127,8 +155,13 @@ WFO.match("FAIDHERBIA ALBIDA", WFO.data=WFO.example, spec.name.tolower=TRUE)
 WFO.match("Prunus sp.", WFO.data=WFO.example, spec.name.sub=TRUE)
 
 # Get urls, but do not open any
-e1 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
-WFO.url(e1, browse=FALSE, browse.rows=c(1:nrow(e1)))
+e2 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
+WFO.url(e2, browse=FALSE, browse.rows=c(1:nrow(e1)))
+
+# Include input species names where now matches were found
+# This happens when the name with original species names is provided to WFO.one
+x1 <- WFO.match("World agroforestry", WFO.data=WFO.example)
+WFO.one(x1, spec.name="spec.name")
 
 \dontrun{
 

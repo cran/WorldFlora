@@ -9,6 +9,43 @@ WorldFlora versions
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
 
+Version 1.2 (4 January 2020)
+
+	* New function WFO.one that results in a one-to-one match between the submitted
+	plant names and the matched plant names. Where there were various candidates for a
+	match, users can specify whether accepted names or names that are not synonyms are
+	given priority. Where multiple candidates still exist, the matched name with the 
+	smallest ID is selected.
+
+	* Yet another priority is invoked for function WFO.one when the Authorship is given.
+	In that case, first priority is given to records with the best match in Authorship.
+
+	* The pattern ' x ' is now interpreted as marking of a hybrid plant name.
+
+	* Sections in plant names that follow bracket '(' are now removed from the checked
+	plant name, invoked by new argument 'Fuzzy.nobrackets' in WFO.match. This feature
+	is expected to remove part of authorities that are not part of the names to be 
+	matched (a match is searched in WFO column of 'scientificName', not 
+	'scientificNameAuthorship').
+
+	* New arguments of 'Fuzzy.two' and 'Fuzzy.one' in function WFO.match that limit names
+	to be matched to respectively the first two or first terms of that name. These 
+	options are expected to eliminate parts of names that are authorities, which are not
+	part of names to be matched (see also argument 'Fuzzy.nobrackets').
+
+	* New argument 'Authorship' for the WFO.match function that allows the user to
+	specify the Authorship. The function will calculate the Levenshtein distance between
+	the submitted and matched Authorships.
+
+	* With a too large number of fuzzy matches, the message now gives one of the matched
+	plant names, allowing the user to potentially verify the correctedness of a genus
+	name.
+
+	* The behaviour of 'spec.name.nonumber' now changed to limits searches to the first 
+	term in case a submitted name contained any numbers (in the previous version, the
+	behaviour was to searh for numbers at the end of submitted names).
+
+
 Version 1.1 (15 December 2019)
 
 	* New function WFO.url that creates urls for matched plant names, with an option to
@@ -29,10 +66,10 @@ Version 1.1 (15 December 2019)
 	* New argument spec.name.tolower that changes submitted species names to lower case
 	characters, except the first character
 
-	* New argument spec.name.nonumber that interpretes submitted names as unidentified
+	* New argument 'spec.name.nonumber' that interpretes submitted names as unidentified
 	species and seeks matches at generic level
 
-	* New argument exclude.infraspecific that removes matched records with the specified
+	* New argument 'exclude.infraspecific' that removes matched records with the specified
 	infraspecific levels. Note that these matched records are removed both from matched 
 	plant names (including synonyms) and matched accepted plant names (excluding 
 	synonyms)

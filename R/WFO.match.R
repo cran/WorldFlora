@@ -2,9 +2,11 @@ WFO.match <- function(
     spec.data=NULL, WFO.file=NULL, WFO.data=NULL,
     spec.name="spec.name", Genus="Genus", Species="Species", 
     Infraspecific.rank="Infraspecific.rank", Infraspecific="Infraspecific",
+    Authorship="Authorship",
     acceptedNameUsageID.match=TRUE,
-    Fuzzy=0.1, Fuzzy.force=FALSE, Fuzzy.max=250, Fuzzy.min=TRUE, Fuzzy.shortest=FALSE, Fuzzy.within=FALSE,
-    spec.name.tolower=FALSE, spec.name.nonumber=TRUE,
+    Fuzzy=0.1, Fuzzy.force=FALSE, Fuzzy.max=250, Fuzzy.min=TRUE, Fuzzy.shortest=FALSE, Fuzzy.within=FALSE, 
+    Fuzzy.two=TRUE, Fuzzy.one=TRUE,
+    spec.name.tolower=FALSE, spec.name.nonumber=TRUE, spec.name.nobrackets=TRUE,
     exclude.infraspecific=FALSE, 
     infraspecific.excluded=c("cultivar.", "f.", "sect.", "subf.", "subg.", "subsp.", "subvar.", "var", "var."),
     spec.name.sub=TRUE, 
@@ -12,7 +14,7 @@ WFO.match <- function(
         " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", 
         "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", " nom[.] inval[.]", " nom[.] nov[.]", 
         " nom[.] nud[.]", " nom[.] obl[.]", " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),
-    verbose=FALSE, counter=1000
+    verbose=TRUE, counter=1000
 )
 {
     if (class(spec.data) == "character") {spec.data <- data.frame(spec.name = spec.data)}
@@ -27,14 +29,19 @@ WFO.match <- function(
 
     WFO.names <- names(WFO.data)
     WFO.names <- c(WFO.names, "Hybrid")
-    if (acceptedNameUsageID.match == TRUE) {WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name")}
+    if (acceptedNameUsageID.match == TRUE) {
+        if (Authorship %in% names(spec.data)) {
+            WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name", "Old.author", "Old.author.dist")
+        }else{
+            WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name")
+        }
+    }
     for (i in 1:length(WFO.names)) {
         if (WFO.names[i] %in% names(spec.data)) {
             message(paste("Original data set variable '", WFO.names[i], "' replaced by variable '", WFO.names[i], ".ORIG'", sep=""))
             names(spec.data)[names(spec.data) == WFO.names[i]] <- paste(WFO.names[i], ".ORIG", sep="")
         }
     }
-
     if (spec.name %in% names(spec.data)) {
         spec.data[, spec.name] <- as.character(spec.data[, spec.name])
         if (spec.name.tolower == TRUE) {
@@ -54,23 +61,60 @@ WFO.match <- function(
                 spec.data[, spec.name] = gsub(pattern=sub.pattern[i], replacement="", x=spec.data[, spec.name])
             }
         }
-        if (spec.name.nonumber == TRUE) {
+        if (spec.name.nobrackets == TRUE) {
             if (spec.name.tolower == FALSE && spec.name.sub == FALSE) {
+                spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+                spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            }
+            spec.data$Brackets.detected <- rep(as.logical(0), nrow(spec.data))
+            for (i in 1:nrow(spec.data)) {
+                species.string <- spec.data[i, spec.name]        
+                if (grepl(pattern=" [(]", x=species.string) == TRUE) {
+                    spec.data[i, "Brackets.detected"] <- as.logical(1)
+                    brack.place <- as.numeric(gregexpr(pattern="[(]", text=species.string))[1]
+                    species.new.string <- substr(species.string, start=1, stop=brack.place-2)
+                    spec.data[i, spec.name] <- species.new.string
+                }
+                if (grepl(pattern="[(]", x=species.string) == TRUE) {
+                    spec.data[i, "Brackets.detected"] <- as.logical(1)
+                    brack.place <- as.numeric(gregexpr(pattern="[(]", text=species.string))[1]
+                    species.new.string <- substr(species.string, start=1, stop=brack.place-1)
+                    spec.data[i, spec.name] <- species.new.string
+                }
+            }
+        }
+        if (spec.name.nonumber == TRUE) {
+            if (spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nobrackets == FALSE) {
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
             spec.data$Number.detected <- rep(as.logical(0), nrow(spec.data))
             for (i in 1:nrow(spec.data)) {
-                species.string <- spec.data[i, spec.name]        
-                if (grepl("^[[:digit:]]", substr(species.string, start=nchar(species.string), stop=nchar(species.string))) == TRUE) {
+                species.string <- spec.data[i, spec.name]
+                if (grepl("[[:digit:]]", species.string) == TRUE) {
                     spec.data[i, "Number.detected"] <- as.logical(1)
-                    species.new.string <- unlist(strsplit(species.string, split=" "))[1]
+                    species.terms <- unlist(strsplit(species.string, split= " "))
+                    species.new.string <- species.terms[1]
                     while (grepl("^[[:digit:]]", substr(species.new.string, start=nchar(species.new.string), stop=nchar(species.new.string))) == TRUE){
                          species.new.string <- substr(species.new.string, start=1, stop=nchar(species.new.string)-1)
                     }
                     spec.data[i, spec.name] <- species.new.string
                 }
             }
+        }
+        if (any(grepl(" x ", spec.data[, spec.name])) == TRUE) {
+            message(paste("pattern ' x ' was interpreted as hybrid notation and replaced by ' ", intToUtf8(215), "'", sep=""))
+            if (spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nonumber == FALSE && spec.name.nobrackets == FALSE) {
+                spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+                spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            }
+            for (i in 1:nrow(spec.data)) {
+                species.string <- spec.data[i, spec.name]
+                if (grepl(" x ", species.string) == TRUE) {
+                    species.new.string <- gsub(pattern=" x ", replacement=paste(" ", intToUtf8(215), sep=""), x=species.string)
+                    spec.data[i, spec.name] <- species.new.string            
+                }
+            }  
         }
     }
 
@@ -81,7 +125,12 @@ WFO.match <- function(
 
     spec.data$Matched <- spec.data$Unique <- rep(as.logical(1), nrow(spec.data))
     spec.data$Fuzzy <- rep(as.logical(0), nrow(spec.data))
+    spec.data$Fuzzy.toomany <- rep(as.logical(0), nrow(spec.data))
+    spec.data$Fuzzy.two <- rep(as.logical(0), nrow(spec.data))
+    spec.data$Fuzzy.one <- rep(as.logical(0), nrow(spec.data))
     spec.data$Fuzzy.dist <- rep(NA, nrow(spec.data))
+    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(NA, nrow(spec.data))}
+    spec.data$OriSeq <- c(1: nrow(spec.data))
     spec.data$Subseq <- rep(1, nrow(spec.data))
     init.column <- ncol(spec.data)
 
@@ -99,7 +148,7 @@ WFO.match <- function(
 
     WFO.empty <- WFO.data[1, ]
     for (i in 1:ncol(WFO.empty)) {WFO.empty[, i] <- ""}
-#
+
     for (i in 1:nrow(spec.data)) {
 
         if (round(i/counter, 0) == i/counter) {message(paste("Reached record # ", i, sep=""))}
@@ -111,8 +160,37 @@ WFO.match <- function(
             if ((nrow(WFO.match) == 0 && Fuzzy > 0) || Fuzzy.force == TRUE) {
                 specFuzzy <- agrep(spec.data[i, spec.name], x=WFO.data$scientificName, value=T, max.distance=Fuzzy)
 
+                if (length(specFuzzy) == 0 && Fuzzy.two == TRUE) {
+                    species.string <- spec.data[i, spec.name]
+                    species.terms <- unlist(strsplit(species.string, split= " "))
+                    if (length(species.terms) > 2) {
+                        species.string2 <- paste(species.terms[1], " ", species.terms[2], sep="")
+                        specFuzzy <- agrep(species.string2, x=WFO.data$scientificName, value=T, max.distance=Fuzzy)
+                        spec.data[i, "Fuzzy.two"] <- as.logical(1)                     
+                        if (verbose == TRUE  && length(specFuzzy) > 0) {message(paste("Fuzzy matches for ", spec.data[i, spec.name], " were only found for first 2 terms", sep=""))}
+                    }
+                }
+
+                if (length(specFuzzy) == 0 && Fuzzy.one == TRUE) {
+                    species.string <- spec.data[i, spec.name]
+                    species.string2 <- unlist(strsplit(species.string, split= " "))[1]
+                    if (nchar(species.string2) > 2) {
+                        spec.data[i, "Fuzzy.one"] <- as.logical(1)
+                        WFO.match <- WFO.data[WFO.data$scientificName==species.string2,]
+                        if ((nrow(WFO.match) == 0 && Fuzzy > 0) || Fuzzy.force == TRUE) {
+                            specFuzzy <- agrep(species.string2, x=WFO.data$scientificName, value=T, max.distance=Fuzzy)                         
+                            if (verbose == TRUE  && length(specFuzzy) > 0) {message(paste("Fuzzy matches for ", spec.data[i, spec.name], " were only found for first term", sep=""))}
+                        }else{
+                            specFuzzy <- NULL
+                            spec.data[i, "Fuzzy"] <- as.logical(1)
+                            fuzzy.matches <- TRUE
+                        }
+                    }
+                }
+
                 if (length(specFuzzy) > Fuzzy.max) {
-                    message(paste("Too many (", length(specFuzzy), ") fuzzy matches for ", spec.data[i, spec.name], sep=""))
+                    spec.data[i, "Fuzzy.toomany"] <- length(specFuzzy)                    
+                    if (verbose == TRUE) {message(paste("Too many (", length(specFuzzy), ") fuzzy matches for ", spec.data[i, spec.name], ", including ", specFuzzy[1], sep=""))}
                     specFuzzy <- NULL
                 }
 
@@ -220,6 +298,10 @@ WFO.match <- function(
         WFO.out$Old.status <- rep("", nrow(WFO.out))
         WFO.out$Old.ID <- rep("", nrow(WFO.out))
         WFO.out$Old.name <- rep("", nrow(WFO.out))
+        if (Authorship %in% names(spec.data)) {
+            WFO.out$Old.author <- rep("", nrow(WFO.out))
+            WFO.out$Old.author.dist <- rep("", nrow(WFO.out))
+        }
         for (i in 1:nrow(WFO.out)) {
             if (round(i/counter, 0) == i/counter) {message(paste("Reached record # ", i, sep=""))}
 #
@@ -234,6 +316,11 @@ WFO.match <- function(
                     WFO.out[i, "Old.status"] <- WFO.out[i, "taxonomicStatus"]
                     WFO.out[i, "Old.ID"] <- WFO.out[i, "taxonID"]
                     WFO.out[i, "Old.name"] <- WFO.out[i, "scientificName"]
+                    if (Authorship %in% names(spec.data)) {
+                        WFO.out[i, "Old.author"] <- WFO.out[i, "scientificNameAuthorship"]
+                        Fuzzy.dist <- as.numeric(utils::adist(WFO.out[i, Authorship], y=WFO.out[i, "scientificNameAuthorship"]))
+                        WFO.out[i, "Old.author.dist"] <- Fuzzy.dist
+                    }
                     WFO.out[i, right.columns] <- WFO.match
                     if (grepl(intToUtf8(215), WFO.out[i, "scientificName"])) {
                         WFO.out[i, "Hybrid"] <- intToUtf8(215)
@@ -251,6 +338,13 @@ WFO.match <- function(
             if (WFO.out[i, "verbatimTaxonRank"] %in% infraspecific.excluded) {keep.rows[i] <- as.logical(0)}
         }
         WFO.out <- WFO.out[keep.rows, ]
+    }
+
+    if (Authorship %in% names(spec.data)) {
+        for (i in 1:nrow(WFO.out)) {
+            Fuzzy.dist <- as.numeric(utils::adist(WFO.out[i, Authorship], y=WFO.out[i, "scientificNameAuthorship"]))
+            WFO.out[i, "Auth.dist"] <- Fuzzy.dist
+        }        
     }
 
 #    if (is.null(filename) == FALSE) {utils::write.table(WFO.out, file=filename, quote=F, sep="\t", row.names=F, append=append)}
