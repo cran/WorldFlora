@@ -23,7 +23,7 @@ WFO.one <- function(
     smallID.select <- function(WFO.c, verbose=FALSE) {
         if (verbose == TRUE) {
             small.candidates <- sort(as.character(WFO.c[, "scientificName"]))
-            message(paste("Smallestas ID candidates for ", WFO.c[1, "OriSeq"], "were: ", paste(small.candidates, collapse=", ")))
+            message(paste("Smallest ID candidates for ", WFO.c[1, "OriSeq"], "were: ", paste(small.candidates, collapse=", ")))
         }
         WFOID.strings <- WFO.c[, "taxonID"]
         WFOID.strings2 <- as.numeric(substr(WFOID.strings, start=5, stop=nchar(WFOID.strings[1])))

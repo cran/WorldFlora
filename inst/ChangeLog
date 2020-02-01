@@ -9,6 +9,29 @@ WorldFlora versions
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
 
+Version 1.3 (1 February 2020)
+
+	* New function WFO.browse that shows all taxa at a next hierarchical level from the
+	submitted and matched plant name (submitting a family results in a list of genera,
+	a genus in a list of species and a species in a list of records at infraspecific
+	levels). If no taxon is submitted, the function returns a list of all families.
+
+	* New function WFO.synonyms that gives all taxa that have the same acceptedNameUsageID
+	as the submitted and matched plant name.
+
+	* New data.set 'vascular.families' that gives information about orders and major clades
+	documented by the fourth update of the Angiosperm Phylogeny Group (APG IV,
+	https://doi.org/10.1111/boj.12385). For gymnosperm and pteridophyte taxa, orders were
+	obtained from http://www.mobot.org/MOBOT/research/APweb/. 
+
+	* New function WFO.family that provides information from the 'vascular.families' for
+	vascular families (angiosperms, gymnosperms and pteridophytes). For bryophytes, the 
+	function returns 'bryophytes' based on an internal list of bryophyte families.
+
+	* Modified WFO.match to handle the problem where authorities are not available for all
+	submitted taxa (this caused a problem in WFO.one to select a unique best match).
+
+
 Version 1.2 (4 January 2020)
 
 	* New function WFO.one that results in a one-to-one match between the submitted

@@ -2,6 +2,9 @@
 \alias{WFO.match}
 \alias{WFO.url}
 \alias{WFO.one}
+\alias{WFO.browse}
+\alias{WFO.synonyms}
+\alias{WFO.family}
 
 \title{Standardize plant names according to World Flora Online taxonomic backbone}
 
@@ -38,6 +41,12 @@ This package checks a list of species against the World Flora Online (WFO) taxon
         spec.name = NULL, Auth.dist = NULL,
         verbose = TRUE, counter = 1000)
 
+    WFO.browse(taxon, WFO.file = NULL, WFO.data = NULL, 
+        accepted.only = FALSE, acceptedNameUsageID.match = TRUE, ...)
+
+    WFO.synonyms(taxon, WFO.file = NULL, WFO.data = NULL, ...)
+
+    WFO.family(taxon, WFO.file = NULL, WFO.data = NULL, ...)
 }
 
 \arguments{
@@ -72,11 +81,14 @@ This package checks a list of species against the World Flora Online (WFO) taxon
   \item{WFO.result}{ Result obtained via {\link[WorldFlora]{WFO.match}}. }
   \item{browse}{ If \code{TRUE}, then browse urls specified by \code{browse.rows}. }  
   \item{browse.rows}{ Indices of row with the urls to be browsed. }
-  \item{...}{ Other arguments for {\link[utils]{browseURL}}. }
 
   \item{priority}{ Method of selecting the 1-to-1 matches. Option \code{Accepted} first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Option \code{Synonym} first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. }
   \item{Auth.dist}{ In case that the name of the variable with the Levenshtein distance between the authorship names is provided, then the algorithm first prioritizes records with the best match between the submitted and matched author names. }
 
+  \item{taxon}{ Character string with the name of the taxon for which information will be given (for families, different genera; for genera, different specieds; for species, infraspecific levels). }  
+  \item{accepted.only}{ If \code{TRUE}, then only provide taxa with accepted names. }  
+
+  \item{...}{ Other arguments for {\link[utils]{browseURL}} (\code{WFO.url}) or \code{WFO.match} (\code{WFO.browse}). }
 }
 
 \details{
@@ -111,6 +123,12 @@ Function \code{WFO.one} finds one unique matching name for each submitted name. 
 
 When the user specifies the column with the \code{Auth.dist}, documenting the Levenshtein
 distance between the submitted and matched authorities, then \code{WFO.one} first prioritizes records with best match between Authorities.
+
+Function \code{WFO.browse} lists all the genera for a family, all species for a genus or all infraspecific levels for a species. 
+
+Function \code{WFO.synonyms} gives all records with the acceptedNameUsageID equal to the matched accepted species shown in the first row. 
+
+Function \code{WFO.family} provides information on the order of vascular plants, based on information available from {\link[WorldFlora]{vascular.families}}. Based on an internal list of bryophyte families, when the submitted plant name is a bryophyte, the function returns 'bryophyte' instead. 
 }
 
 \value{
@@ -171,6 +189,7 @@ data(bryophytes)
 
 # Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
 # that was downloaded from \url{http://www.worldfloraonline.org/downloadData}.
+# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip  
 WFO.file.RK <- file.choose()
 
 # check species name
@@ -214,6 +233,30 @@ w6 <- WFO.match("Acacia caes", WFO.file=WFO.file.RK, Fuzzy=0.01, Fuzzy.within=TR
 spec.test1 <- data.frame(Genus=c("Casimiroa"))
 w8 <- WFO.match(spec.test1, WFO.file=WFO.file.RK, exclude.infraspecific=TRUE, verbose=TRUE)
 
+# show all listings at a next hierarchical level
+WFO.data1 <- data.table::fread(WFO.file.RK, encoding="UTF-8")
+
+WFO.browse("Pinaceae", WFO.data=WFO.data1)
+WFO.browse("Pinaceae", WFO.data=WFO.data1, accepted.only=T)
+
+WFO.browse("Tsuga", WFO.data=WFO.data1)
+WFO.browse("Tsuga", WFO.data=WFO.data1, accepted.only=T)
+
+WFO.browse("Olea europaea", WFO.data=WFO.data1)
+WFO.browse("Olea europaea", WFO.data=WFO.data1, accepted.only=T)
+
+# browsing only works at family, genus and species levels
+# for orders, however, information is given from vascular.families
+WFO.browse("Polypodiales", WFO.data=WFO.data1)
+
+# submitting no name results in a list of all families
+WFO.browse(, WFO.data=WFO.data1)
+
+# give synonyms
+WFO.synonyms("Olea europaea", WFO.data=WFO.data1)
+
+# give order and other higher levels from family
+WFO.family("Olea europaea", WFO.data=WFO.data1)
 }
 }
 

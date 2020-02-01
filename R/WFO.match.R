@@ -129,7 +129,7 @@ WFO.match <- function(
     spec.data$Fuzzy.two <- rep(as.logical(0), nrow(spec.data))
     spec.data$Fuzzy.one <- rep(as.logical(0), nrow(spec.data))
     spec.data$Fuzzy.dist <- rep(NA, nrow(spec.data))
-    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(NA, nrow(spec.data))}
+    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
     spec.data$OriSeq <- c(1: nrow(spec.data))
     spec.data$Subseq <- rep(1, nrow(spec.data))
     init.column <- ncol(spec.data)
@@ -319,6 +319,7 @@ WFO.match <- function(
                     if (Authorship %in% names(spec.data)) {
                         WFO.out[i, "Old.author"] <- WFO.out[i, "scientificNameAuthorship"]
                         Fuzzy.dist <- as.numeric(utils::adist(WFO.out[i, Authorship], y=WFO.out[i, "scientificNameAuthorship"]))
+                        if (is.na(Fuzzy.dist) == TRUE) {Fuzzy.dist <- Inf}
                         WFO.out[i, "Old.author.dist"] <- Fuzzy.dist
                     }
                     WFO.out[i, right.columns] <- WFO.match
@@ -343,6 +344,7 @@ WFO.match <- function(
     if (Authorship %in% names(spec.data)) {
         for (i in 1:nrow(WFO.out)) {
             Fuzzy.dist <- as.numeric(utils::adist(WFO.out[i, Authorship], y=WFO.out[i, "scientificNameAuthorship"]))
+            if (is.na(Fuzzy.dist) == TRUE) {Fuzzy.dist <- Inf}
             WFO.out[i, "Auth.dist"] <- Fuzzy.dist
         }        
     }

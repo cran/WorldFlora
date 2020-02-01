@@ -2,15 +2,15 @@ Package: WorldFlora
 Type: Package
 Title: Standardize Plant Names According to World Flora Online
         Taxonomic Backbone
-Version: 1.2
-Date: 2020-1-4
+Version: 1.3
+Date: 2020-2-1
 Author: Roeland Kindt
 Maintainer: Roeland Kindt <R.KINDT@CGIAR.ORG>
 Description: World Flora Online is an online flora of all known plants, available from <http://www.worldfloraonline.org/>. Methods are provided of matching a list of plant names (scientific names, taxonomic names, botanical names) against a static copy of the World Flora Online Taxonomic Backbone data that can be downloaded from the World Flora Online website. The World Flora Online Taxonomic Backbone is an updated version of The Plant List (<http://www.theplantlist.org/>), a working list of plant names that has become static since 2013.
 License: GPL-2
-Depends: R (>= 3.2.2)
+Depends: R (>= 3.5.0)
 Suggests: data.table, utils
-Packaged: 2020-01-07 05:41:57 UTC; RKINDT
+Packaged: 2020-01-31 05:48:25 UTC; RKINDT
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2020-01-07 08:40:07 UTC
+Date/Publication: 2020-02-01 05:40:02 UTC
