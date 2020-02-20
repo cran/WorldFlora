@@ -9,6 +9,22 @@ WorldFlora versions
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
 
+Version 1.4 (20 February 2020)
+
+	* New function WFO.prepare that attempts to split a list of plant names into the 
+	botanical name and the naming authority.
+
+	* Corrected a bug in function WFO.match to fail when there were missing values in the
+	acceptedNameUsageID (error reported by Sandeep Pulla).
+
+	* Allowed function WFO.match to deal with situations where there were several sections
+	between brackets in the plant name.
+
+	* Included a reference to the preprint of Kindt R. 2020. WorldFlora: An R package for
+	exact and fuzzy matching of plant names against the World Flora Online Taxonomic
+	Backbone data. https://www.biorxiv.org/content/10.1101/2020.02.02.930719v1
+
+
 Version 1.3 (1 February 2020)
 
 	* New function WFO.browse that shows all taxa at a next hierarchical level from the

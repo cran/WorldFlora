@@ -29,6 +29,7 @@ WFO.match <- function(
 
     WFO.names <- names(WFO.data)
     WFO.names <- c(WFO.names, "Hybrid")
+    if (Authorship %in% names(spec.data)) {WFO.names <- c(WFO.names, "Auth.dist")}
     if (acceptedNameUsageID.match == TRUE) {
         if (Authorship %in% names(spec.data)) {
             WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name", "Old.author", "Old.author.dist")
@@ -69,17 +70,11 @@ WFO.match <- function(
             spec.data$Brackets.detected <- rep(as.logical(0), nrow(spec.data))
             for (i in 1:nrow(spec.data)) {
                 species.string <- spec.data[i, spec.name]        
-                if (grepl(pattern=" [(]", x=species.string) == TRUE) {
-                    spec.data[i, "Brackets.detected"] <- as.logical(1)
-                    brack.place <- as.numeric(gregexpr(pattern="[(]", text=species.string))[1]
-                    species.new.string <- substr(species.string, start=1, stop=brack.place-2)
-                    spec.data[i, spec.name] <- species.new.string
-                }
                 if (grepl(pattern="[(]", x=species.string) == TRUE) {
                     spec.data[i, "Brackets.detected"] <- as.logical(1)
-                    brack.place <- as.numeric(gregexpr(pattern="[(]", text=species.string))[1]
+                    brack.place <- as.numeric(unlist(gregexpr(pattern="[(]", text=species.string)))[1]
                     species.new.string <- substr(species.string, start=1, stop=brack.place-1)
-                    spec.data[i, spec.name] <- species.new.string
+                    spec.data[i, spec.name] <- stringr::str_squish(species.new.string)
                 }
             }
         }
@@ -129,7 +124,10 @@ WFO.match <- function(
     spec.data$Fuzzy.two <- rep(as.logical(0), nrow(spec.data))
     spec.data$Fuzzy.one <- rep(as.logical(0), nrow(spec.data))
     spec.data$Fuzzy.dist <- rep(NA, nrow(spec.data))
-    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
+
+#    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
+    if (Authorship %in% names(spec.data)) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
+    
     spec.data$OriSeq <- c(1: nrow(spec.data))
     spec.data$Subseq <- rep(1, nrow(spec.data))
     init.column <- ncol(spec.data)
@@ -305,6 +303,9 @@ WFO.match <- function(
         for (i in 1:nrow(WFO.out)) {
             if (round(i/counter, 0) == i/counter) {message(paste("Reached record # ", i, sep=""))}
 #
+# updated 14-FEB-2020 after bug report from Sandeep Pulla
+            if (is.null(WFO.out[i, "acceptedNameUsageID"]) == TRUE) {WFO.out[i, "acceptedNameUsageID"] <- ""}
+
             if (WFO.out[i, "acceptedNameUsageID"] != "") {
                 WFO.match <- WFO.data[WFO.data$taxonID==WFO.out[i, "acceptedNameUsageID"], ]
                 if (nrow(WFO.match) == 0) {
