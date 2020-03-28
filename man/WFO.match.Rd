@@ -16,7 +16,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
     WFO.match(spec.data = NULL, WFO.file = NULL, WFO.data = NULL,
         spec.name = "spec.name", Genus = "Genus", Species = "Species", 
         Infraspecific.rank = "Infraspecific.rank", Infraspecific = "Infraspecific",
-        Authorship = "Authorship",
+        Authorship = "Authorship", First.dist = FALSE,
         acceptedNameUsageID.match = TRUE,
         Fuzzy = 0.1, Fuzzy.force = FALSE, Fuzzy.max = 250, Fuzzy.min = TRUE, 
         Fuzzy.shortest = FALSE, Fuzzy.within = FALSE,
@@ -38,7 +38,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
     WFO.url(WFO.result = NULL, browse = FALSE, browse.rows = c(1:1), ...)
 
     WFO.one(WFO.result = NULL, priority = "Accepted", 
-        spec.name = NULL, Auth.dist = NULL,
+        spec.name = NULL, Auth.dist = NULL, First.dist = NULL,
         verbose = TRUE, counter = 1000)
 
     WFO.browse(taxon, WFO.file = NULL, WFO.data = NULL, 
@@ -59,6 +59,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
   \item{Infraspecific.rank}{ Name of the column with the infraspecific rank (such as "subsp.", "var." or "cultivar."). }
   \item{Infraspecific}{ Name of the column with the infraspecific names. }
   \item{Authorship}{ Name of the column with the naming authorities. }
+  \item{First.dist}{ If \code{TRUE}, then calculate the fuzzy distance between the first words of the submitted and matched names (these are typically the genus names) . }
   \item{acceptedNameUsageID.match}{ If \code{TRUE}, obtain the accepted name and others details from the earlier acceptedNameUsageID. }
   \item{Fuzzy}{ If larger than 0, then attempt fuzzy matching in case an identifical taxonomic name is not found in the World Flora Online. This argument will be used as argument \code{max.distance} in the internally called \code{\link[base]{agrep}}. Note that fuzzy matching is only possible for the \code{spec.name}.  }
   \item{Fuzzy.force}{ If \code{TRUE}, always use the fuzzy matching algorithm, even when the \code{spec.name} was matched exactly. }
@@ -157,6 +158,10 @@ spec.test <- data.frame(spec.name=c("Faidherbia albida", "Acacia albida",
     "Omalanthus populneus", "Pygeum afric"))
 
 WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
+
+# Also calculate the Levenshtein distance for the genus
+WFO.match(spec.data=spec.test, WFO.data=WFO.example, First.dist=TRUE,
+    counter=1, verbose=TRUE)
 
 # Show all the fuzzy matches, which included those at infraspecifc level
 e1 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, 

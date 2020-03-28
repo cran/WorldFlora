@@ -2,7 +2,7 @@ WFO.match <- function(
     spec.data=NULL, WFO.file=NULL, WFO.data=NULL,
     spec.name="spec.name", Genus="Genus", Species="Species", 
     Infraspecific.rank="Infraspecific.rank", Infraspecific="Infraspecific",
-    Authorship="Authorship",
+    Authorship="Authorship", First.dist=FALSE,
     acceptedNameUsageID.match=TRUE,
     Fuzzy=0.1, Fuzzy.force=FALSE, Fuzzy.max=250, Fuzzy.min=TRUE, Fuzzy.shortest=FALSE, Fuzzy.within=FALSE, 
     Fuzzy.two=TRUE, Fuzzy.one=TRUE,
@@ -127,6 +127,7 @@ WFO.match <- function(
 
 #    if (acceptedNameUsageID.match == TRUE) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
     if (Authorship %in% names(spec.data)) {spec.data$Auth.dist <- rep(Inf, nrow(spec.data))}
+    if (First.dist == TRUE) {spec.data$First.dist <- rep(Inf, nrow(spec.data))}
     
     spec.data$OriSeq <- c(1: nrow(spec.data))
     spec.data$Subseq <- rep(1, nrow(spec.data))
@@ -153,7 +154,7 @@ WFO.match <- function(
 
         fuzzy.matches <- FALSE
 
-        if (spec.name %in% names(spec.data)) {
+        if (spec.name %in% names(spec.data) && nchar(spec.data[i, spec.name]) > 0) {
             WFO.match <- WFO.data[WFO.data$scientificName==spec.data[i, spec.name],]
             if ((nrow(WFO.match) == 0 && Fuzzy > 0) || Fuzzy.force == TRUE) {
                 specFuzzy <- agrep(spec.data[i, spec.name], x=WFO.data$scientificName, value=T, max.distance=Fuzzy)
@@ -198,6 +199,30 @@ WFO.match <- function(
                     specFuzzy <- unique(specFuzzy)
                     if (verbose == TRUE) {message(paste("Fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
                     
+                    if (spec.data[i, "Fuzzy.two"] == TRUE && spec.data[i, "Fuzzy.one"] == FALSE) {
+                        specFuzzy.2 <- NULL
+                        for (j in 1:length(specFuzzy)) {
+                            species.string3 <- unlist(strsplit(specFuzzy[j], split= " "))
+                            if (length(species.string3) < 3) {specFuzzy.2 <- c(specFuzzy.2, specFuzzy[j])}
+                        }
+                        if (length(specFuzzy.2) > 0) {
+                            if (verbose == TRUE) {message(paste("With Fuzzy.two, reduced matches to those of 2 words only"))}
+                            specFuzzy <- specFuzzy.2
+                        }
+                    }
+                    
+                    if (spec.data[i, "Fuzzy.one"] == TRUE) {
+                        specFuzzy.2 <- NULL
+                        for (j in 1:length(specFuzzy)) {
+                            species.string3 <- unlist(strsplit(specFuzzy[j], split= " "))
+                            if (length(species.string3) < 2) {specFuzzy.2 <- c(specFuzzy.2, specFuzzy[j])}
+                        }
+                        if (length(specFuzzy.2) > 0) {
+                            if (verbose == TRUE) {message(paste("With Fuzzy.one, reduced matches to those of 1 word only"))}
+                            specFuzzy <- specFuzzy.2
+                        }            
+                    }
+                                        
                     if (Fuzzy.within == TRUE) {
                         Fuzzy.shortest <- Fuzzy.min <- FALSE
                         within.matches <- grepl(spec.data[i, spec.name], x=specFuzzy)
@@ -265,6 +290,17 @@ WFO.match <- function(
         if (fuzzy.matches == TRUE) {
             for (j in 1:nrow(WFO.match2)) {
                 WFO.match2[j, "Fuzzy.dist"] <- as.numeric(utils::adist(WFO.match2[j, "scientificName"], y=spec.data[i, spec.name]))
+                
+                if (First.dist == TRUE) {
+                    genus.input <- spec.data[i, spec.name]
+                    genus.input2 <- unlist(strsplit(genus.input, split= " "))[1]
+                    genus.match <- WFO.match2[j, "scientificName"]
+                    genus.match2 <- unlist(strsplit(genus.match, split= " "))[1]
+                    Fuzzy.dist1 <- as.numeric(utils::adist(genus.input2, y=genus.match2))
+                    if (is.na(Fuzzy.dist1) == TRUE) {Fuzzy.dist1 <- Inf}
+                    WFO.match2[j, "First.dist"] <- Fuzzy.dist1   
+                }
+               
             }
         }
 

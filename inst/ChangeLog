@@ -9,6 +9,19 @@ WorldFlora versions
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
 
+Version 1.5 (28 March 2020)
+
+	* New argument 'First.dist' of WFO.match and WFO.one results in calculating the 
+	Levenshtein distance between the first word of the submitted and matched plant names.
+	Typically this applies to the genus name. WFO.one will select the matches with the 
+	smallest 'First.dist'.
+
+	* Modified the behaviour of WFO.match when matches were only found via Fuzzy.two. In 
+	these cases, only matches with 2 words are retained.
+
+	* Avoided an error when no name is submitted to WFO.match.
+
+
 Version 1.4 (20 February 2020)
 
 	* New function WFO.prepare that attempts to split a list of plant names into the 

@@ -1,6 +1,6 @@
 WFO.one <- function(
     WFO.result=NULL, priority="Accepted", 
-    spec.name=NULL, Auth.dist=NULL,
+    spec.name=NULL, Auth.dist=NULL, First.dist=NULL,
     verbose=TRUE, counter=1000
 )
 {
@@ -51,6 +51,18 @@ WFO.one <- function(
                         onereason <- "Authorship best match"
                         WFO.case2 <- WFO.case[WFO.case[, Auth.dist] == min.dist, , drop=F]
                         if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best Authorship match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
+                        WFO.case <- WFO.case2
+                    }
+                }
+            }
+
+            if (length(First.dist) > 0  && nrow(WFO.case) > 1) {
+                if (First.dist %in% names(WFO.result)) {
+                    min.dist <- min(as.numeric(WFO.case[, First.dist]), na.rm=TRUE)
+                    if (is.na(min.dist) == FALSE) {                      
+                        onereason <- "First distance best match"
+                        WFO.case2 <- WFO.case[WFO.case[, First.dist] == min.dist, , drop=F]
+                        if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best first distance match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
                         WFO.case <- WFO.case2
                     }
                 }
