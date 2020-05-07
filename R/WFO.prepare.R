@@ -1,6 +1,12 @@
 WFO.prepare <- function(
     spec.data=NULL, spec.full="spec.full",
-    squish=TRUE, 
+    squish=TRUE, spec.name.nonumber=TRUE,
+    spec.name.sub=TRUE, 
+    sub.pattern=c(" sp[.] A", " sp[.] B", " sp[.] C", " sp[.]", " spp[.]", " pl[.]", " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]", 
+        " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", 
+        "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", " nom[.] inval[.]", " nom[.] nov[.]", 
+        " nom[.] nud[.]", " nom[.] obl[.]", " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),    
+    genus.2.flag=TRUE, species.2.flag=TRUE, punctuation.flag=TRUE, pointless.flag=TRUE,
     trinomial=c("cultivar.", "f.", "sect.", "subf.", "subg.", "subsp.", "subvar.", "var.",
                 "CULTIVAR.",       "SECT.", "SUBF.", "SUBG.", "SUBSP.", "SUBVAR.", "VAR."),
     verbose=TRUE, counter=1000
@@ -19,6 +25,10 @@ WFO.prepare <- function(
     
     spec.data$spec.name <- rep("", nrow(spec.data))
     spec.data$Authorship <- rep("", nrow(spec.data))
+    if (genus.2.flag == TRUE) {spec.data$genus.2 <- spec.data$genus.nchar <- rep("", nrow(spec.data))}
+    if (species.2.flag == TRUE) {spec.data$species.2 <- spec.data$species.nchar <- rep("", nrow(spec.data))}
+    if (punctuation.flag == TRUE) {spec.data$punctuation <- rep("", nrow(spec.data))}
+    if (pointless.flag == TRUE) {spec.data$pointless <- rep("", nrow(spec.data))}
 
     for (i in 1:nrow(spec.data)) {
 
@@ -29,6 +39,29 @@ WFO.prepare <- function(
         if (squish == TRUE) {
             spfull1 <- stringr::str_squish(spfull)
             if (verbose == TRUE) {if (spfull != spfull1) {message(paste(spfull, " was squished", sep=""))}}
+            spfull <- spfull1
+        }
+
+        if (spec.name.sub == TRUE) {
+            spfull1 <- spfull
+            for (j in 1:length(sub.pattern)) {
+                spfull1 <- gsub(pattern=sub.pattern[j], replacement="", x=spfull1)
+            }
+            if (verbose == TRUE) {if (spfull != spfull1) {message(paste("Removed sub.patterns from " , spfull, " resulting in: ", spfull1, sep=""))}}
+            spfull <- spfull1
+        }
+
+        if (spec.name.nonumber == TRUE) {
+            spfull1 <- spfull
+            if (grepl("[[:digit:]]", spfull1) == TRUE) {
+                species.terms <- unlist(strsplit(spfull1, split= " "))
+                species.new.string <- species.terms[1]
+                while (grepl("^[[:digit:]]", substr(species.new.string, start=nchar(species.new.string), stop=nchar(species.new.string))) == TRUE){
+                    species.new.string <- substr(species.new.string, start=1, stop=nchar(species.new.string)-1)
+                }
+                spfull1 <- species.new.string
+            }
+            if (verbose == TRUE) {if (spfull != spfull1) {message(paste("Numbers detected in ", spfull, " and replaced by: ",  spfull1, sep=""))}}
             spfull <- spfull1
         }
 
@@ -82,6 +115,57 @@ WFO.prepare <- function(
         
         spec.data[i, "spec.name"] <- sp.final
         spec.data[i, "Authorship"] <- auth.final
+        
+        if (genus.2.flag==TRUE || species.2.flag==TRUE) {
+            sp.string <- unlist(strsplit(sp.final, split= " "))
+            if (genus.2.flag == TRUE) {
+                spec.data[i, "genus.nchar"] <- nchar(sp.string[1])
+                if (nchar(sp.string[1]) < 3) {
+                    spec.data[i, "genus.2"] <- sp.string[1]
+                    if (verbose == TRUE) {message(paste("Short first part of name detected for: ", sp.final, sep=""))}
+                }
+            }
+            if (species.2.flag == TRUE && length(sp.string) > 1) {
+                spec.data[i, "species.nchar"] <- nchar(sp.string[2])
+                if (nchar(sp.string[2]) < 3) {
+                    spec.data[i, "species.2"] <- sp.string[2]
+                    if (verbose == TRUE) {message(paste("Short second part of name detected for: ", sp.final, sep=""))}
+                }
+            }                
+        }
+        
+        if (punctuation.flag==TRUE) {
+        
+# first remove the trinomials since these contain punctuation marks! 
+            sp.final1 <- tolower(sp.final)
+            for (j in 1:length(trinomial)) {
+                sp.final1 <- gsub(pattern=trinomial[j], replacement="", x=sp.final1)            
+            } 
+        
+            if (grepl(pattern="[[:punct:]]", x=sp.final1) == TRUE) {
+                spec.data[i, "punctuation"] <- as.logical(1)
+                if (verbose == TRUE) {message(paste("Punctuation mark detected for: ", sp.final, sep=""))}
+            }
+        }
+        
+        if (pointless.flag==TRUE) {
+            sp.final1 <- tolower(sp.final)
+
+# first remove the trinomials since these contain punctuation marks!            
+            for (j in 1:length(trinomial)) {
+                if (trinomial[j] != "f.") {sp.final1 <- gsub(pattern=trinomial[j], replacement="", x=sp.final1)}
+            }            
+
+            for (j in 1:length(sub.pattern)) {
+                sub1 <- gsub(pattern="[[:punct:]]", replacement="", x=sub.pattern[j])
+                sub2 <- tolower(sub1)
+                if (nchar(sub1) > 2 && grepl(pattern=sub2, x=sp.final1) == TRUE) {
+                    spec.data[i, "pointless"] <- as.logical(1)
+                    if (verbose == TRUE) {message(paste("Subpattern without punctuation mark ('", sub1, "') detected for: ", sp.final, sep=""))}
+                }
+            }                
+        }
+        
     }
     
     if (all.equal(spec.data$Authorship, rep("", nrow(spec.data))) == TRUE) {
@@ -91,7 +175,3 @@ WFO.prepare <- function(
     return(spec.data)
 }
 
-
-
-
-   

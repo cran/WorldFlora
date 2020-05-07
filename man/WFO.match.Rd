@@ -21,6 +21,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
         Fuzzy = 0.1, Fuzzy.force = FALSE, Fuzzy.max = 250, Fuzzy.min = TRUE, 
         Fuzzy.shortest = FALSE, Fuzzy.within = FALSE,
         Fuzzy.two = TRUE, Fuzzy.one = TRUE,
+        squish = TRUE, 
         spec.name.tolower = FALSE, spec.name.nonumber = TRUE, spec.name.nobrackets = TRUE,
         exclude.infraspecific = FALSE, 
         infraspecific.excluded = c("cultivar.", "f.", "sect.", "subf.", "subg.", 
@@ -69,6 +70,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
   \item{Fuzzy.within}{ If \code{TRUE}, limit the matching of names to those that contain exactly the submitted plant name (this feature is expected to be useful when submitting plant names that only contain a subset of the first characters of the species name, in order to check for best matches manually afterwards). }
   \item{Fuzzy.two}{ If \code{TRUE}, in case that there were no fuzzy matches, limit the terms to be matched to the first two (these are expected to be genus and species names). }
   \item{Fuzzy.one}{ If \code{TRUE}, in case that there were no fuzzy matches, limit the terms to be matched to the first one (expected to be the genus name). }
+  \item{squish}{ If \code{TRUE}, remove repeated whitespace and white space from the start and end of the submitted full name via {\link[stringr]{str_squish}}. }
   \item{spec.name.tolower}{ If \code{TRUE}, then convert all characters of the \code{spec.name} to lower case via {\link[base]{tolower}}. }
   \item{spec.name.nonumber}{ If \code{TRUE}, then submitted \code{spec.name} that contain numbers will be interpreted as genera, only matching the first word. }
   \item{spec.name.nobrackets}{ If \code{TRUE}, then submitted \code{spec.name} then sections of the submitted name after '(' will be removed. Note that this will also remove sections after ')', such as authorities for plant names that are in a separate column of WFO.  }

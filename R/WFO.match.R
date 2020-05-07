@@ -6,6 +6,7 @@ WFO.match <- function(
     acceptedNameUsageID.match=TRUE,
     Fuzzy=0.1, Fuzzy.force=FALSE, Fuzzy.max=250, Fuzzy.min=TRUE, Fuzzy.shortest=FALSE, Fuzzy.within=FALSE, 
     Fuzzy.two=TRUE, Fuzzy.one=TRUE,
+    squish=TRUE,
     spec.name.tolower=FALSE, spec.name.nonumber=TRUE, spec.name.nobrackets=TRUE,
     exclude.infraspecific=FALSE, 
     infraspecific.excluded=c("cultivar.", "f.", "sect.", "subf.", "subg.", "subsp.", "subvar.", "var", "var."),
@@ -44,26 +45,42 @@ WFO.match <- function(
         }
     }
     if (spec.name %in% names(spec.data)) {
-        spec.data[, spec.name] <- as.character(spec.data[, spec.name])
-        if (spec.name.tolower == TRUE) {
+        spec.data[, spec.name] <- as.character(spec.data[, spec.name])    
+        for (i in 1:nrow(spec.data)) {
+            if (is.na(spec.data[i, spec.name]) == TRUE) {spec.data[i, spec.name] <- ""}
+        }
+        if (squish == TRUE) {
             spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
             spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            spec.data[, spec.name] <- stringr::str_squish(spec.data[, spec.name.ORIG])
+            spec.data$Squished <- rep(as.logical(0), nrow(spec.data))
+            for (i in 1:nrow(spec.data)) {
+                if (nchar(spec.data[i, spec.name.ORIG]) > 0) {
+                    if (spec.data[i, spec.name.ORIG] != spec.data[i, spec.name]) {spec.data[i, "Squished"] <- as.logical(1)}
+                }
+            }
+        }        
+        if (spec.name.tolower == TRUE) {
+            if (squish == FALSE) {
+                spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
+                spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
+            }
             spec.data[, spec.name] <- tolower(spec.data[, spec.name.ORIG])
             for (i in 1:nrow(spec.data)) {
                 substr(spec.data[i, spec.name], start=1, stop=1) <- toupper(substr(spec.data[i, spec.name], start=1, stop=1)) 
             }
         }
         if (spec.name.sub == TRUE) {
-            if (spec.name.tolower == FALSE) {
+            if (squish == FALSE && spec.name.tolower == FALSE) {
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
             for (i in 1:length(sub.pattern)) {
-                spec.data[, spec.name] = gsub(pattern=sub.pattern[i], replacement="", x=spec.data[, spec.name])
+                spec.data[, spec.name] <- gsub(pattern=sub.pattern[i], replacement="", x=spec.data[, spec.name])
             }
         }
         if (spec.name.nobrackets == TRUE) {
-            if (spec.name.tolower == FALSE && spec.name.sub == FALSE) {
+            if (squish == FALSE && spec.name.tolower == FALSE && spec.name.sub == FALSE) {
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
@@ -79,7 +96,7 @@ WFO.match <- function(
             }
         }
         if (spec.name.nonumber == TRUE) {
-            if (spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nobrackets == FALSE) {
+            if (squish == FALSE && spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nobrackets == FALSE) {
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
@@ -99,7 +116,7 @@ WFO.match <- function(
         }
         if (any(grepl(" x ", spec.data[, spec.name])) == TRUE) {
             message(paste("pattern ' x ' was interpreted as hybrid notation and replaced by ' ", intToUtf8(215), "'", sep=""))
-            if (spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nonumber == FALSE && spec.name.nobrackets == FALSE) {
+            if (squish == FALSE && spec.name.tolower == FALSE && spec.name.sub == FALSE && spec.name.nonumber == FALSE && spec.name.nobrackets == FALSE) {
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
@@ -156,6 +173,18 @@ WFO.match <- function(
 
         if (spec.name %in% names(spec.data) && nchar(spec.data[i, spec.name]) > 0) {
             WFO.match <- WFO.data[WFO.data$scientificName==spec.data[i, spec.name],]
+            
+            if (nrow(WFO.match) == 0) {
+                 if (spec.data[i, spec.name] == "Compositae") {WFO.match <- WFO.data[WFO.data$scientificName=="Asteraceae", ]}
+                 if (spec.data[i, spec.name] == "Leguminosae") {WFO.match <- WFO.data[WFO.data$scientificName=="Fabaceae", ]}
+                 if (spec.data[i, spec.name] == "Umbelliferae") {WFO.match <- WFO.data[WFO.data$scientificName=="Apiaceae", ]}
+                 if (spec.data[i, spec.name] == "Palmae") {WFO.match <- WFO.data[WFO.data$scientificName=="Arecaceae", ]}
+                 if (spec.data[i, spec.name] == "Cruciferae") {WFO.match <- WFO.data[WFO.data$scientificName=="Brassicaceae", ]}
+                 if (spec.data[i, spec.name] == "Guttiferae") {WFO.match <- WFO.data[WFO.data$scientificName=="Clusiaceae", ]}
+                 if (spec.data[i, spec.name] == "Labiatae") {WFO.match <- WFO.data[WFO.data$scientificName=="Lamiaceae", ]}      
+                 if (spec.data[i, spec.name] == "Gramineae") {WFO.match <- WFO.data[WFO.data$scientificName=="Poaceae", ]}            
+            }
+            
             if ((nrow(WFO.match) == 0 && Fuzzy > 0) || Fuzzy.force == TRUE) {
                 specFuzzy <- agrep(spec.data[i, spec.name], x=WFO.data$scientificName, value=T, max.distance=Fuzzy)
 
