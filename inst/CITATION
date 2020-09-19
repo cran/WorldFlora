@@ -1,0 +1,13 @@
+citHeader("To cite WorldFlora in publications use:")
+
+citEntry(entry="Article",
+        title = "WorldFlora: An R package for exact and fuzzy matching of plant names against the World Flora Online taxonomic backbone data",
+        author =  personList(as.person("R. Kindt")),
+	year = 2020,
+	journal = "Applications in Plant Sciences",
+	volume = 8,
+	pages = "e11388",	
+         
+         textVersion = 
+         paste("Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names against the World Flora Online taxonomic backbone data. Applications in Plant Sciences 8(9): e11388.")
+)

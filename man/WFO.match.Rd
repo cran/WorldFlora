@@ -145,9 +145,9 @@ World Flora Online. An Online Flora of All Known Plants.
 Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity era. 
     Methods in Ecology and Evolution 7: 1217-1225.
 
-Kindt R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names
-    against the World Flora Online Taxonomic Backbone data.
-    \url{https://www.biorxiv.org/content/10.1101/2020.02.02.930719v1}
+Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names against 
+    the World Flora Online taxonomic backbone data. 
+    Applications in Plant Sciences 8(9): e11388
 }   
 
 \author{Roeland Kindt (World Agroforestry)}

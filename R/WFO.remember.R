@@ -3,7 +3,7 @@ WFO.remember <- function(
 )
 {
 
-    WFO.data.file <- paste(system.file(package="WorldFlora"), "/etc/remember.txt", sep='')    
+    WFO.data.file <- paste(system.file(package="WorldFlora"), "/etc/remember.txt", sep="")    
 
     if (is.null(WFO.file) == FALSE) {
         data.save <- data.frame(WFO.file=file.path(WFO.file), date=date())

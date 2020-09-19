@@ -2,11 +2,65 @@
 WorldFlora versions
 
 	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
-	http://www.worldfloraonline.org/downloadData
+	http://www.worldfloraonline.org/downloadData. This can be done with function
+	WFO.download.
 
 	The suggested citation of the World Flora Online (WFO) is:
 	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet; 
 	http://www.worldfloraonline.org. Accessed on:[Date]".
+
+	The suggested citation of the WorldFlora package is:
+	Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names 
+	against the World Flora Online taxonomic backbone data. Applications in Plant 
+	Sciences 8(9): e11388. 
+
+
+Verson 1.7 (September 2020)
+
+	* Included references to the article published in Applications in Plant Sciences
+
+	* Forced fields of WFO.data$created and WFO.data$modified to be of the 'date' format.
+	A problem had been reported by Lauri Vesa (10-Sep-2020)
+
+
+Version 1.6 (7 May 2020)
+
+	* New function WFO.download that downloads the Taxonomic Backbone data from the 
+	website (http://www.worldfloraonline.org/downloadData) and unzips the file in the
+	working directory.
+
+	* New function WFO.remember that remembers the location where the Taxonomic Backbone
+	data were saved and reads in the data, default as 'WFO.data'
+
+	* Function WFO.match now recognizes alternative family names (Compositae, 
+	Leguminosae, Umbelliferae, Palmae, Cruciferae, Guttiferae, Labiatae and Gramineae).
+
+	* New argument 'squish' of WFO.match that removes white space from start and end of 
+	the submitted plant name and flags its earlier presence. Repeated whitespace inside
+	the plant name is also removed. Feature was suggested by an external reviewer of the 
+	submitted article.
+
+	* New arguments 'spec.name.sub' and 'sub.pattern' of WFO.prepare that aim to remove 
+	semi-standardized qualifiers in plant names such as 'aff.' and 'cf.'
+
+	* New argument 'spec.name.nonumber' of WFO.prepare that results in only retaining the 
+	first word if there are numbers in the submitted plant name.
+
+	* New argument 'genus.2.flag' of WFO.prepare that results in flagging submitted 
+	plant names where the first word only has 2 characters (this function is intended
+	to flag qualifiers in plant names that were wrongly interpreted as genus names).
+
+	* New argument 'species.2.flag' of WFO.prepare that results in flagging submitted
+	plant names where the second word only has 2 characters (this function is intended
+	to flag qualifiers in plant names that were wrongly interpreted as species names).
+
+	* New argument 'punctuation.flag' of WFO.prepare that results in flagging punctuation
+	marks
+
+	* New argument 'pointless.flag' of WFO.prepare that results in flagging parts of
+	submitted plant names that flags if there is a sub.pattern without the punctuation
+	mark (for example, if the plant name included 'aff' which is sub.pattern 'aff.'
+	without the punctuation mark).
 
 
 Version 1.5 (28 March 2020)

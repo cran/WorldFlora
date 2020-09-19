@@ -28,6 +28,13 @@ WFO.match <- function(
         WFO.data <- data.table::fread(WFO.file, encoding="UTF-8")
     }
 
+## avoid problems with dates (error reported by Lauri Vesa)
+    WFO.data$created <- as.Date(as.character(WFO.data$created))
+    WFO.data$modified <- as.Date(as.character(WFO.data$modified))
+
+    WFO.data$created[is.na(WFO.data$created)] <- as.Date("1000-01-01")
+    WFO.data$modified[is.na(WFO.data$modified)] <- as.Date("1000-01-01")
+
     WFO.names <- names(WFO.data)
     WFO.names <- c(WFO.names, "Hybrid")
     if (Authorship %in% names(spec.data)) {WFO.names <- c(WFO.names, "Auth.dist")}
@@ -164,6 +171,9 @@ WFO.match <- function(
 
     WFO.empty <- WFO.data[1, ]
     for (i in 1:ncol(WFO.empty)) {WFO.empty[, i] <- ""}
+## avoid problems with dates (error reported by Lauri Vesa)
+    WFO.empty$created <- as.Date("1000-01-02")
+    WFO.empty$modified <- as.Date("1000-01-02")
 
     for (i in 1:nrow(spec.data)) {
 
