@@ -3,7 +3,7 @@
 \docType{data}
 \title{Orders and Higher Level Classifications of Vascular Plants}
 \description{
-This data set lists orders for families of vascular plants (angiosperms, gymnosperms and pteridophytes). For angiosperms, information from orders and higher levels of classification correspond to the fourth update of the Angiosperm Phylogeny Group (APG IV, \url{https://doi.org/10.1111/boj.12385}). Higher levels of classification correspond to names of nodes of the consensus tree (Figure 1 in \url{https://doi.org/10.1111/boj.12385}). Orders for gymnosperms and pteridophytes were obtained from \url{http://www.mobot.org/MOBOT/research/APweb/}.
+This data set lists orders for families of vascular plants (angiosperms, gymnosperms and pteridophytes). For angiosperms, information from orders and higher levels of classification correspond to the fourth update of the Angiosperm Phylogeny Group (APG IV, \doi{10.1111/boj.12385}). Higher levels of classification correspond to names of nodes of the consensus tree (Figure 1 in \doi{10.1111/boj.12385}). Orders for gymnosperms and pteridophytes were obtained from \url{http://www.mobot.org/MOBOT/research/APweb/}.
 }
 
 \usage{data(vascular.families)}
@@ -26,7 +26,7 @@ This data set lists orders for families of vascular plants (angiosperms, gymnosp
 
 
 \references{
-The Angiosperm Phylogeny Group, M. W. Chase, M. J. M. Christenhusz, M. F. Fay, J. W. Byng, W. S. Judd, D. E. Soltis, D. J. Mabberley, A. N. Sennikov, P. S. Soltis, P. F. Stevens, An update of the Angiosperm Phylogeny Group classification for the orders and families of flowering plants: APG IV, Botanical Journal of the Linnean Society 181: 1-20. \url{https://doi.org/10.1111/boj.12385}
+The Angiosperm Phylogeny Group, M. W. Chase, M. J. M. Christenhusz, M. F. Fay, J. W. Byng, W. S. Judd, D. E. Soltis, D. J. Mabberley, A. N. Sennikov, P. S. Soltis, P. F. Stevens, An update of the Angiosperm Phylogeny Group classification for the orders and families of flowering plants: APG IV, Botanical Journal of the Linnean Society 181: 1-20. \doi{10.1111/boj.12385}
 }
 
 \examples{

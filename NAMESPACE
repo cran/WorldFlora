@@ -1,6 +1,7 @@
 
 export(WFO.match, WFO.url, WFO.one, WFO.browse, WFO.synonyms, WFO.family,
     WFO.prepare, WFO.download, WFO.remember,
+    new.backbone,
     .onAttach)
 
 

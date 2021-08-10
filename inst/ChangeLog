@@ -2,7 +2,7 @@
 WorldFlora versions
 
 	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
-	http://www.worldfloraonline.org/downloadData. This can be done with function
+	<http://www.worldfloraonline.org/downloadData>. This can be done with function
 	WFO.download.
 
 	The suggested citation of the World Flora Online (WFO) is:
@@ -15,18 +15,34 @@ WorldFlora versions
 	Sciences 8(9): e11388. 
 
 
+Verson 1.8 (August 2021)
+
+	* New function new.backbone that allows to standardize names with a user-created
+	taxonomic backbone data set.
+
+	* An alternative example than shown in the documentation of using the 	
+	new.backbone function to standardize mammal species names with the Mammal Diversity 
+	Database (https://www.mammaldiversity.org) is provided in the following RPub:
+
+	Kindt, R. 2021. Standardizing mammal species names with the Mammal Species Database 
+	via exact and fuzzy matching functions from the WorldFlora package. 
+	https://rpubs.com/Roeland-KINDT
+
+
 Verson 1.7 (September 2020)
 
-	* Included references to the article published in Applications in Plant Sciences
+	* Included reference to the article published in Applications in Plant Sciences
 
 	* Forced fields of WFO.data$created and WFO.data$modified to be of the 'date' format.
-	A problem had been reported by Lauri Vesa (10-Sep-2020)
+	Where WFO.data had an empty date field, the date of 1000-01-01 was inserted. Where
+	there were no matches, the date of 1000-01-02 was inserted. A problem had been 
+	reported by Lauri Vesa (10-Sep-2020)
 
 
 Version 1.6 (7 May 2020)
 
 	* New function WFO.download that downloads the Taxonomic Backbone data from the 
-	website (http://www.worldfloraonline.org/downloadData) and unzips the file in the
+	website (<http://www.worldfloraonline.org/downloadData>) and unzips the file in the
 	working directory.
 
 	* New function WFO.remember that remembers the location where the Taxonomic Backbone
@@ -105,7 +121,7 @@ Version 1.3 (1 February 2020)
 	* New data.set 'vascular.families' that gives information about orders and major clades
 	documented by the fourth update of the Angiosperm Phylogeny Group (APG IV,
 	https://doi.org/10.1111/boj.12385). For gymnosperm and pteridophyte taxa, orders were
-	obtained from http://www.mobot.org/MOBOT/research/APweb/. 
+	obtained from <http://www.mobot.org/MOBOT/research/APweb/>. 
 
 	* New function WFO.family that provides information from the 'vascular.families' for
 	vascular families (angiosperms, gymnosperms and pteridophytes). For bryophytes, the 
