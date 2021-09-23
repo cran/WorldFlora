@@ -1,12 +1,11 @@
 new.backbone <- function(
-    x, 
-    taxonID="taxonID", scientificName="scientificName", 
+    x,
+    taxonID="taxonID", scientificName="scientificName",
     scientificNameAuthorship="scientificNameAuthorship",
-    acceptedNameUsageID=NULL, taxonomicStatus=NULL,
-    created=NULL, modified=NULL)
+    acceptedNameUsageID=NULL, taxonomicStatus=NULL)
 {
 
-x <- data.frame(x)  
+x <- data.frame(x)
 for (j in 1:ncol(x)) {x[, j] <- as.character(x[, j])}
 
 out <- data.frame(taxonID = x[, taxonID],
@@ -28,24 +27,10 @@ if (is.null(taxonomicStatus)) {
                     taxonomicStatus = x[, taxonomicStatus])
 }
 
-if (is.null(created)) {
-  out$created <- as.character("1000-01-01", nrow(out))
-}else{
-  out <- data.frame(out,
-                    created = x[, created])
-}
-
-if (is.null(modified)) {
-  out$modified <- as.character("1000-01-01", nrow(out))
-}else{
-  out <- data.frame(out,
-                    modified = x[, modified])
-}
-
-keep.columns <- names(x) %in% c("taxonID", 
-                                "scientificName", "scientificNameAuthorship", 
-                                "acceptedNameUsageID", "taxonomicStatus", 
-                                "created", "modified") == FALSE
+keep.columns <- names(x) %in% c("taxonID",
+                                "scientificName", "scientificNameAuthorship",
+                                "acceptedNameUsageID", "taxonomicStatus"
+                                ) == FALSE
 
 out <- data.table::data.table(out, x[, keep.columns])
 

@@ -14,35 +14,36 @@ This package checks a list of species against the World Flora Online (WFO) taxon
 
 \usage{
     WFO.match(spec.data = NULL, WFO.file = NULL, WFO.data = NULL,
-        spec.name = "spec.name", Genus = "Genus", Species = "Species", 
+        no.dates = TRUE,
+        spec.name = "spec.name", Genus = "Genus", Species = "Species",
         Infraspecific.rank = "Infraspecific.rank", Infraspecific = "Infraspecific",
         Authorship = "Authorship", First.dist = FALSE,
         acceptedNameUsageID.match = TRUE,
-        Fuzzy = 0.1, Fuzzy.force = FALSE, Fuzzy.max = 250, Fuzzy.min = TRUE, 
+        Fuzzy = 0.1, Fuzzy.force = FALSE, Fuzzy.max = 250, Fuzzy.min = TRUE,
         Fuzzy.shortest = FALSE, Fuzzy.within = FALSE,
         Fuzzy.two = TRUE, Fuzzy.one = TRUE,
-        squish = TRUE, 
+        squish = TRUE,
         spec.name.tolower = FALSE, spec.name.nonumber = TRUE, spec.name.nobrackets = TRUE,
-        exclude.infraspecific = FALSE, 
-        infraspecific.excluded = c("cultivar.", "f.", "sect.", "subf.", "subg.", 
+        exclude.infraspecific = FALSE,
+        infraspecific.excluded = c("cultivar.", "f.", "sect.", "subf.", "subg.",
             "subsp.", "subvar.", "var", "var."),
-        spec.name.sub = TRUE, 
+        spec.name.sub = TRUE,
         sub.pattern=c(" sp[.] A", " sp[.] B", " sp[.] C", " sp[.]", " spp[.]", " pl[.]",
-            " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]", " nov[.]", " prox[.]", 
-            " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", 
-            " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", "Ca[.]", 
-            "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", 
-            " nom[.] inval[.]", " nom[.] nov[.]", " nom[.] nud[.]", " nom[.] obl[.]", 
+            " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]", " nov[.]", " prox[.]",
+            " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]",
+            " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", "Ca[.]",
+            "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]",
+            " nom[.] inval[.]", " nom[.] nov[.]", " nom[.] nud[.]", " nom[.] obl[.]",
             " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),
         verbose = TRUE, counter = 1000)
 
     WFO.url(WFO.result = NULL, browse = FALSE, browse.rows = c(1:1), ...)
 
-    WFO.one(WFO.result = NULL, priority = "Accepted", 
+    WFO.one(WFO.result = NULL, priority = "Accepted",
         spec.name = NULL, Auth.dist = NULL, First.dist = NULL,
         verbose = TRUE, counter = 1000)
 
-    WFO.browse(taxon, WFO.file = NULL, WFO.data = NULL, 
+    WFO.browse(taxon, WFO.file = NULL, WFO.data = NULL,
         accepted.only = FALSE, acceptedNameUsageID.match = TRUE, ...)
 
     WFO.synonyms(taxon, WFO.file = NULL, WFO.data = NULL, ...)
@@ -54,6 +55,7 @@ This package checks a list of species against the World Flora Online (WFO) taxon
   \item{spec.data}{ A data.frame containing variables with species names. In case that a character vector is provided, then this vector will be converted to a data.frame }
   \item{WFO.file}{ File name of the static copy of the Taxonomic Backbone. If not \code{NULL}, then data will be reloaded from this file.}
   \item{WFO.data}{ Data set with the static copy of the Taxonomic Backbone. Ignored if \code{WFO.file} is not \code{NULL}. }
+  \item{no.dates}{ Speeding up the loading of the WFO.data by not loading fields of 'created' and 'modified'. }
   \item{spec.name}{ Name of the column with taxonomic names. In case that a \code{spec.name} is provided, then separate genus and species names will be ignored. For function \code{WFO.one}, giving the name for this columns results in copying a submitted but unmatched plant name into the \code{scientificName} of the results.}
   \item{Genus}{ Name of the column with the genus names. }
   \item{Species}{ Name of the column with the species names. }
@@ -78,18 +80,18 @@ This package checks a list of species against the World Flora Online (WFO) taxon
   \item{infraspecific.excluded}{ Infraspecific levels (available from column 'verbatimTaxonRank') excluded in the results. Note that levels are excluded both in direct matches and matches with the accepted name. }
   \item{spec.name.sub}{ If \code{TRUE}, then delete sections of the \code{spec.name} that match the \code{sub.pattern}. }
   \item{sub.pattern}{ Sections of the \code{spec.name} to be deleted }
-  \item{verbose}{ Give details on the fuzzy matching process. }  
+  \item{verbose}{ Give details on the fuzzy matching process. }
   \item{counter}{ Progress on the matching process is reported by multiples of this counter. }
 
   \item{WFO.result}{ Result obtained via {\link[WorldFlora]{WFO.match}}. }
-  \item{browse}{ If \code{TRUE}, then browse urls specified by \code{browse.rows}. }  
+  \item{browse}{ If \code{TRUE}, then browse urls specified by \code{browse.rows}. }
   \item{browse.rows}{ Indices of row with the urls to be browsed. }
 
   \item{priority}{ Method of selecting the 1-to-1 matches. Option \code{Accepted} first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Option \code{Synonym} first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. }
   \item{Auth.dist}{ In case that the name of the variable with the Levenshtein distance between the authorship names is provided, then the algorithm first prioritizes records with the best match between the submitted and matched author names. }
 
-  \item{taxon}{ Character string with the name of the taxon for which information will be given (for families, different genera; for genera, different specieds; for species, infraspecific levels). }  
-  \item{accepted.only}{ If \code{TRUE}, then only provide taxa with accepted names. }  
+  \item{taxon}{ Character string with the name of the taxon for which information will be given (for families, different genera; for genera, different specieds; for species, infraspecific levels). }
+  \item{accepted.only}{ If \code{TRUE}, then only provide taxa with accepted names. }
 
   \item{...}{ Other arguments for {\link[utils]{browseURL}} (\code{WFO.url}) or \code{WFO.match} (\code{WFO.browse}). }
 }
@@ -120,18 +122,18 @@ Column 'Old.ID' gives the ID of the first match with the non-blank acceptedNameU
 Column 'Old.name' gives the name of the first match with the non-blank acceptedNameUsageID.
 
 
-The function was inspired on the \code{Taxonstand} package that matches plant names against The Plant List. Note that The Plant List has been static since 2013, but was used as the starting point for the Taxonomic Backbone of the World Flora Online. 
+The function was inspired on the \code{Taxonstand} package that matches plant names against The Plant List. Note that The Plant List has been static since 2013, but was used as the starting point for the Taxonomic Backbone of the World Flora Online.
 
 Function \code{WFO.one} finds one unique matching name for each submitted name. Via \code{priority = "Accepted"}, it first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Via \code{priority = "Synonym"}, it first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. When a \code{spec.name} is given to \code{WFO.one}, the original submitted name is inserted for the code{scientificName}.
 
 When the user specifies the column with the \code{Auth.dist}, documenting the Levenshtein
 distance between the submitted and matched authorities, then \code{WFO.one} first prioritizes records with best match between Authorities.
 
-Function \code{WFO.browse} lists all the genera for a family, all species for a genus or all infraspecific levels for a species. 
+Function \code{WFO.browse} lists all the genera for a family, all species for a genus or all infraspecific levels for a species.
 
-Function \code{WFO.synonyms} gives all records with the acceptedNameUsageID equal to the matched accepted species shown in the first row. 
+Function \code{WFO.synonyms} gives all records with the acceptedNameUsageID equal to the matched accepted species shown in the first row.
 
-Function \code{WFO.family} provides information on the order of vascular plants, based on information available from {\link[WorldFlora]{vascular.families}}. Based on an internal list of bryophyte families, when the submitted plant name is a bryophyte, the function returns 'bryophyte' instead. 
+Function \code{WFO.family} provides information on the order of vascular plants, based on information available from {\link[WorldFlora]{vascular.families}}. Based on an internal list of bryophyte families, when the submitted plant name is a bryophyte, the function returns 'bryophyte' instead.
 }
 
 \value{
@@ -142,13 +144,13 @@ The main function returns a data.set with the matched species details from the W
 World Flora Online. An Online Flora of All Known Plants.
     \url{http://www.worldfloraonline.org}
 
-Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity era. 
+Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity era.
     Methods in Ecology and Evolution 7: 1217-1225.
 
-Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names against 
-    the World Flora Online taxonomic backbone data. 
+Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names against
+    the World Flora Online taxonomic backbone data.
     Applications in Plant Sciences 8(9): e11388
-}   
+}
 
 \author{Roeland Kindt (World Agroforestry)}
 
@@ -156,7 +158,7 @@ Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant n
 
 data(WFO.example)
 
-spec.test <- data.frame(spec.name=c("Faidherbia albida", "Acacia albida", 
+spec.test <- data.frame(spec.name=c("Faidherbia albida", "Acacia albida",
     "Omalanthus populneus", "Pygeum afric"))
 
 WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
@@ -166,7 +168,7 @@ WFO.match(spec.data=spec.test, WFO.data=WFO.example, First.dist=TRUE,
     counter=1, verbose=TRUE)
 
 # Show all the fuzzy matches, which included those at infraspecifc level
-e1 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, 
+e1 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1,
     Fuzzy.min=FALSE, Fuzzy.shortest=FALSE, verbose=TRUE)
 e1
 
@@ -200,7 +202,7 @@ data(bryophytes)
 
 # Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
 # that was downloaded from \url{http://www.worldfloraonline.org/downloadData}.
-# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip  
+# Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip
 WFO.file.RK <- file.choose()
 
 # check species name
@@ -220,18 +222,18 @@ w2
 
 # only check genus and species
 # specify different names for infraspecific columns as default to Taxonstand
-w3 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species", 
+w3 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species",
           Infraspecific.rank="none", Infraspecific="none", counter=1)
 
 # note that the method above also retrieved infraspecific levels
 # to only retrieve at the species level, match infraspecific levels with an empty column
 r1$empty <- rep("", nrow(r1))
-w4 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species", 
+w4 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species",
           Infraspecific.rank="empty", Infraspecific="empty", counter=1)
 
 # as an alternative to the method above, exclude all documented infraspecific levels
 # from the results
-w5 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species", 
+w5 <- WFO.match(r1, WFO.file=WFO.file.RK, Genus="New.Genus", Species="New.Species",
           exclude.infraspecific=TRUE, counter=1)
 
 # save results to file

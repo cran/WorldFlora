@@ -1,5 +1,5 @@
 WFO.one <- function(
-    WFO.result=NULL, priority="Accepted", 
+    WFO.result=NULL, priority="Accepted",
     spec.name=NULL, Auth.dist=NULL, First.dist=NULL,
     verbose=TRUE, counter=1000
 )
@@ -26,12 +26,14 @@ WFO.one <- function(
             message(paste("Smallest ID candidates for ", WFO.c[1, "OriSeq"], "were: ", paste(small.candidates, collapse=", ")))
         }
         WFOID.strings <- WFO.c[, "taxonID"]
-        WFOID.strings2 <- as.numeric(substr(WFOID.strings, start=5, stop=nchar(WFOID.strings[1])))
+#        WFOID.strings2 <- as.numeric(substr(WFOID.strings, start=5, stop=nchar(WFOID.strings[1])))
+# modified in version 1.9 to deal with data created by new.backbone
+        WFOID.strings2 <- as.numeric(gsub("[^0-9]", "", x=WFOID.strings))
         WFO.o <- WFO.c[which.min(WFOID.strings2), , drop=F]
         return(WFO.o)
     }
 
-    WFO.cases <- unique(WFO.result[, "OriSeq"])    
+    WFO.cases <- unique(WFO.result[, "OriSeq"])
 
     for (i in 1:length(WFO.cases)) {
 
@@ -47,7 +49,7 @@ WFO.one <- function(
             if (length(Auth.dist) > 0) {
                 if (Auth.dist %in% names(WFO.result)) {
                     min.dist <- min(as.numeric(WFO.case[, Auth.dist]), na.rm=TRUE)
-                    if (is.na(min.dist) == FALSE) {                      
+                    if (is.na(min.dist) == FALSE) {
                         onereason <- "Authorship best match"
                         WFO.case2 <- WFO.case[WFO.case[, Auth.dist] == min.dist, , drop=F]
                         if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best Authorship match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
@@ -59,7 +61,7 @@ WFO.one <- function(
             if (length(First.dist) > 0  && nrow(WFO.case) > 1) {
                 if (First.dist %in% names(WFO.result)) {
                     min.dist <- min(as.numeric(WFO.case[, First.dist]), na.rm=TRUE)
-                    if (is.na(min.dist) == FALSE) {                      
+                    if (is.na(min.dist) == FALSE) {
                         onereason <- "First distance best match"
                         WFO.case2 <- WFO.case[WFO.case[, First.dist] == min.dist, , drop=F]
                         if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best first distance match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
@@ -108,7 +110,7 @@ WFO.one <- function(
                     if (nrow(WFO.case2) == 0) {WFO.case2 <- WFO.case}
                 }
             }
- 
+
             if (nrow(WFO.case2) > 1) {
                 WFO.case3 <- smallID.select(WFO.case2, verbose=verbose)
                 if (verbose == T) {message(paste("Selected record with smallest ID for record # ", WFO.case[1, "OriSeq"], sep=""))}

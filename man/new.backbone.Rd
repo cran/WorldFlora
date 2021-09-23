@@ -10,10 +10,9 @@ Instead of using the taxonomic backbone data set from World Flora Online, it is 
 \usage{
 
 new.backbone(x,
-    taxonID = "taxonID", scientificName = "scientificName", 
+    taxonID = "taxonID", scientificName = "scientificName",
     scientificNameAuthorship = "scientificNameAuthorship",
-    acceptedNameUsageID = NULL, taxonomicStatus = NULL,
-    created = NULL, modified = NULL
+    acceptedNameUsageID = NULL, taxonomicStatus = NULL
 )
 
 }
@@ -22,17 +21,15 @@ new.backbone(x,
     \item{x}{ data.frame with the variables. }
     \item{taxonID}{ name of the variable with the identification }
     \item{scientificName}{ name of the variable with the full taxon name }
-    \item{scientificNameAuthorship}{ name of the variable with the naming authors } 
-    \item{acceptedNameUsageID}{ ID of the record with the current (accepted) name. Should respond to an ID in the 'taxonID' column. In case the taxonomic name is current, then this field should be left blank. }
-    \item{taxonomicStatus}{ Variable that indicates whether the record is for a current name or a synonym. This variable is not used by matching functions of WorldFlora and could be left blank. }
-    \item{created}{ Variable that indicates the date of creation; can be left blank. }
-    \item{modified}{ Variable that indicates the date of modification; can be left blank. }
+    \item{scientificNameAuthorship}{ name of the variable with the naming authors }
+    \item{acceptedNameUsageID}{ ID of the record with the current (accepted) name. Should respond to an ID in the 'taxonID' column. In case the taxonomic name is current, then this field should be left blank. This field is used by function WFO.match to find the accepted name of a species.}
+    \item{taxonomicStatus}{ Variable that indicates whether the record is for a current name or a synonym. This variable is used by function WFO.one to discriminate situations where best matches include matches with current names and synonyms. }
 }
 
 \details{
 This function allows a user to create a new taxonomic backbone data set that is understood by WFO.match and WFO.one.
 
-An alternative example with the Mammal Diversity Database (\url{https://www.mammaldiversity.org/}) is provided in the Kindt (2021) RPub.
+Alternative examples with the Mammal Diversity Database (\url{https://www.mammaldiversity.org/}) and the World Checlist of Vascular Plants (\url{https://wcvp.science.kew.org/}) are provided in the Kindt 2021a,b RPubs.
 }
 
 \value{
@@ -46,16 +43,20 @@ The function returns a data.table that can be understood by WFO.match and WFO.on
 }
 
 \references{
-Kindt, R. 2021. Standardizing mammal species names with the Mammal Species Database 
+Kindt, R. 2021a. Standardizing mammal species names with the Mammal Species Database
     via exact and fuzzy matching functions from the WorldFlora package.
     \url{https://rpubs.com/Roeland-KINDT}
-}  
+
+Kindt, R. 2021b. Standardizing GlobalTreeSearch tree species names with
+    World Flora Online and the World Checklist of Vascular Plants
+    \url{https://rpubs.com/Roeland-KINDT}
+}
 
 \examples{
 
 \dontrun{
 
-# load the World Flora Online taxonomic backbone 
+# load the World Flora Online taxonomic backbone
 WFO.remember()
 
 # get a list of Sapotaceae species
@@ -76,14 +77,14 @@ GTS <- data.frame(GTS.ID = paste0("GTS-", c(1:nrow(GTS))), GTS)
 nrow(GTS)
 
 # create the new backbone
-GTS.data <- new.backbone(GTS, 
+GTS.data <- new.backbone(GTS,
                          taxonID="GTS.ID",
                          scientificName="TaxonName",
                          scientificNameAuthorship="Author")
 head(GTS.data)
 
 # Check and standardize Sapotaceae
-Sapotaceae.match <- WFO.one(WFO.match(Sapotaceae, 
+Sapotaceae.match <- WFO.one(WFO.match(Sapotaceae,
                                       WFO.data = GTS.data,
                                       spec.name = "species.name",
                                       Authorship = "author"))
@@ -92,13 +93,9 @@ nrow(Sapotaceae.match[Sapotaceae.match$Fuzzy == FALSE, ] )
 nrow(Sapotaceae.match[Sapotaceae.match$Fuzzy == TRUE &
         Sapotaceae.match$Fuzzy.dist < 4, ] )
 Sapotaceae.match[Sapotaceae.match$Fuzzy == TRUE &
-        Sapotaceae.match$Fuzzy.dist < 4, 
+        Sapotaceae.match$Fuzzy.dist < 4,
         c("ID", "species.name", "Fuzzy.dist", "scientificName")]
 
 }
 
 }
-
-
-
-
