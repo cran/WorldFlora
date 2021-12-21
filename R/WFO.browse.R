@@ -1,5 +1,5 @@
 WFO.browse <- function(
-    taxon=NULL, WFO.file=NULL, WFO.data=NULL, 
+    taxon=NULL, WFO.file=NULL, WFO.data=NULL,
         accepted.only = FALSE, acceptedNameUsageID.match = TRUE, ...
 )
 {
@@ -15,8 +15,11 @@ WFO.browse <- function(
     if (is.null(taxon) == TRUE) {
         rank.found <- "all"
         rank.found1 <- as.logical(1)
-        right.level <- (WFO.data$taxonRank == "family" | WFO.data$taxonRank == "Family") 
-        result <- WFO.data[right.level, ]   
+# changed for World Flora Online DEC 2021 release
+        right.level <- (WFO.data$taxonRank == "family" |
+                            WFO.data$taxonRank == "Family" |
+                            WFO.data$taxonRank == "FAMILY")
+        result <- WFO.data[right.level, ]
         result <- result[, c("taxonID", "scientificName", "scientificNameAuthorship", "taxonRank", "taxonomicStatus", "acceptedNameUsageID")]
         result <- result[order(result$scientificName), ]
         cat(paste("Results are a list of all families", "\n", sep=""))
@@ -41,7 +44,8 @@ WFO.browse <- function(
         result <- browse.found[, c("taxonID", "scientificName", "scientificNameAuthorship", "taxonRank", "taxonomicStatus", "acceptedNameUsageID")]
     }
 
-    if (rank.found %in% c("genus", "Genus")) {
+# changed for World Flora Online DEC 2021 release
+    if (rank.found %in% c("genus", "Genus", "GENUS")) {
         rank.found1 <- as.logical(1)
         browse.found <- WFO.data[WFO.data$genus==taxon.found,]
         right.level <- (browse.found$taxonRank == "SPECIES" | browse.found$taxonRank == "Species" | browse.found$taxonRank == "species" | browse.found$taxonRank == "nothospecies")
@@ -50,16 +54,21 @@ WFO.browse <- function(
         result <- browse.found[, c("taxonID", "scientificName", "scientificNameAuthorship", "taxonRank", "taxonomicStatus", "acceptedNameUsageID")]
     }
 
-    if (rank.found %in% c("family", "Family")) {
+# changed for World Flora Online DEC 2021 release
+    if (rank.found %in% c("family", "Family", "FAMILY")) {
         rank.found1 <- as.logical(1)
         browse.found <- WFO.data[WFO.data$family==taxon.found,]
-        right.level <- (browse.found$taxonRank == "genus" | browse.found$taxonRank == "Genus")
+# changed for World Flora Online DEC 2021 release
+        right.level <- (browse.found$taxonRank == "genus" |
+                            browse.found$taxonRank == "Genus" |
+                            browse.found$taxonRank == "GENUS")
         browse.found1 <- browse.found[right.level, ]
         browse.found <- browse.found1[order(browse.found1$scientificName), ]
         result <- browse.found[, c("taxonID", "scientificName", "scientificNameAuthorship", "taxonRank", "taxonomicStatus", "acceptedNameUsageID")]
     }
 
-    if (rank.found %in% c("order")) {
+# changed for World Flora Online DEC 2021 release
+    if (rank.found %in% c("order", "ORDER")) {
         .WorldFlora <- new.env()
         utils::data("vascular.families", package="WorldFlora", envir=.WorldFlora)
         WFO.families <- eval(as.name("vascular.families"), envir=.WorldFlora)
@@ -74,8 +83,9 @@ WFO.browse <- function(
         return(NULL)
     }else{
         if (accepted.only == TRUE) {
-            result <- result[result$taxonomicStatus == "Accepted", ]
-        }else{ 
+# changed for World Flora Online DEC 2021 release
+            result <- result[result$taxonomicStatus %in% c("Accepted", "ACCEPTED"), ]
+        }else{
             if (acceptedNameUsageID.match == TRUE) {
                 result$New.name <- rep("", nrow(result))
                 for (i in 1:nrow(result)) {

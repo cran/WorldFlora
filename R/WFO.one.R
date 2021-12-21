@@ -11,7 +11,8 @@ WFO.one <- function(
     WFO.new$One.Reason <- rep("", nrow(WFO.result))
 
     accepted.select <- function(WFO.c) {
-        WFO.o <- WFO.c[WFO.c[, "taxonomicStatus"] == "Accepted", , drop=F]
+# changed for World Flora Online DEC 2021 release
+        WFO.o <- WFO.c[WFO.c[, "taxonomicStatus"] %in% c("Accepted", "ACCEPTED"), , drop=F]
         return(WFO.o)
     }
 
