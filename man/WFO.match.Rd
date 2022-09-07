@@ -188,9 +188,9 @@ WFO.match("Prunus sp.", WFO.data=WFO.example, spec.name.sub=TRUE)
 
 # Get urls, but do not open any
 e2 <- WFO.match(spec.data=spec.test, WFO.data=WFO.example, counter=1, verbose=TRUE)
-WFO.url(e2, browse=FALSE, browse.rows=c(1:nrow(e1)))
+WFO.url(e2, browse=FALSE, browse.rows=c(1:nrow(e2)))
 
-# Include input species names where now matches were found
+# Include input species names where no matches were found
 # This happens when the name with original species names is provided to WFO.one
 x1 <- WFO.match("World agroforestry", WFO.data=WFO.example)
 WFO.one(x1, spec.name="spec.name")

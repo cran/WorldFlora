@@ -3,9 +3,10 @@ WorldFlora versions
 
 	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
 	<http://www.worldfloraonline.org/downloadData>. This can be done with function
-	WFO.download.
+	WFO.download(). If the function fails to download the entire, manually download the zip
+	file and then use WFO.remember().  
 
-	The suggested citation of the World Flora Online (WFO) is:
+	The suggested citation of World Flora Online (WFO) is:
 	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet;
 	http://www.worldfloraonline.org. Accessed on:[Date]".
 
@@ -13,6 +14,25 @@ WorldFlora versions
 	Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names
 	against the World Flora Online taxonomic backbone data. Applications in Plant
 	Sciences 8(9): e11388.
+
+	Various examples of using WorldFlora are available via 
+	<https://rpubs.com/Roeland-KINDT> 
+
+
+Version 1.11 (September 2022)
+
+	* Made necessary corrections when checking package before uploading
+
+	* Changed author email from previous CGIAR.org domain (as a new CIFOR-ICRAF domain
+	will be created)
+
+Version 1.10 (December 2021)
+
+	* Modified functions WFO.one and WFO.browse to deal with capitalized taxonomic ranks
+	of the DEC 2021 version of the taxonomic backbone.
+
+	* Expanded the options for argument 'infraspecific.excluded' for WFO.match to include
+	the new levels available from the DEC 2021 version of the taxonomic backbone.
 
 
 Verson 1.9 (September 2021)

@@ -1,18 +1,18 @@
 WFO.prepare <- function(
     spec.data=NULL, spec.full="spec.full",
     squish=TRUE, spec.name.nonumber=TRUE,
-    spec.name.sub=TRUE, 
-    sub.pattern=c(" sp[.] A", " sp[.] B", " sp[.] C", " sp[.]", " spp[.]", " pl[.]", " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]", 
-        " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]", 
-        "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", " nom[.] inval[.]", " nom[.] nov[.]", 
-        " nom[.] nud[.]", " nom[.] obl[.]", " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),    
+    spec.name.sub=TRUE,
+    sub.pattern=c(" sp[.] A", " sp[.] B", " sp[.] C", " sp[.]", " spp[.]", " pl[.]", " indet[.]", " ind[.]", " gen[.]", " g[.]", " fam[.]",
+        " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]",
+        "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", " nom[.] inval[.]", " nom[.] nov[.]",
+        " nom[.] nud[.]", " nom[.] obl[.]", " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]"),
     genus.2.flag=TRUE, species.2.flag=TRUE, punctuation.flag=TRUE, pointless.flag=TRUE,
     trinomial=c("cultivar.", "f.", "sect.", "subf.", "subg.", "subsp.", "subvar.", "var.",
                 "CULTIVAR.",       "SECT.", "SUBF.", "SUBG.", "SUBSP.", "SUBVAR.", "VAR."),
     verbose=TRUE, counter=1000
 )
 {
-    if (class(spec.data) == "character") {spec.data <- data.frame(spec.full = spec.data)}
+    if (class(spec.data) %in% c("data.frame") == FALSE) {spec.data <- data.frame(spec.full = spec.data)}
     if (is.factor(spec.data) == TRUE) {spec.data <- data.frame(spec.full = spec.data)}
 
     WFO.names <- c("spec.name", "Authorship")
@@ -22,7 +22,7 @@ WFO.prepare <- function(
             names(spec.data)[names(spec.data) == WFO.names[i]] <- paste(WFO.names[i], ".ORIG", sep="")
         }
     }
-    
+
     spec.data$spec.name <- rep("", nrow(spec.data))
     spec.data$Authorship <- rep("", nrow(spec.data))
     if (genus.2.flag == TRUE) {spec.data$genus.2 <- spec.data$genus.nchar <- rep("", nrow(spec.data))}
@@ -72,18 +72,18 @@ WFO.prepare <- function(
             sp.final <- spfull
         }else{
             sp.final <- paste(sp.string[1], " ", sp.string[2], sep="")
-        
+
             if (any(sp.string %in% trinomial)) {
                 sub.start <- which(sp.string %in% trinomial)
-               
+
                 if (length(sub.start) > 1) {
                     warning(paste("Two trinomial epithets provided for ", spfull, sep=""))
                     auth.add <- max(sub.start) + 2
                     sp.final2 <- paste(sp.string[min(sub.start)], " ", sp.string[min(sub.start)+1], sep="")
-                    sp.final <- paste(sp.final, " ", sp.final2, sep="")     
+                    sp.final <- paste(sp.final, " ", sp.final2, sep="")
                 }else{
                     auth.add <- sub.start + 2
-               
+
                     if (length(sp.string) < sub.start + 1) {
                         warning(paste("No trinomial epithet provided for ", spfull, sep=""))
                         auth.add <- sub.start + 1
@@ -104,7 +104,7 @@ WFO.prepare <- function(
 
 # remove second set of brackets
         if (nchar(auth.final) > 1) {
-            auth.final1 <- substr(auth.final, start=2, stop=nchar(auth.final))         
+            auth.final1 <- substr(auth.final, start=2, stop=nchar(auth.final))
             if (grepl(pattern="[(]", x=auth.final1) == TRUE) {
                 if (verbose == TRUE) {message(paste("Second bracket detected for ", auth.final, sep=""))}
                 brack.place <- as.numeric(unlist(gregexpr(pattern="[(]", text=auth.final1)))[1] + 1
@@ -112,10 +112,10 @@ WFO.prepare <- function(
                 auth.final <- stringr::str_squish(auth.final2)
             }
         }
-        
+
         spec.data[i, "spec.name"] <- sp.final
         spec.data[i, "Authorship"] <- auth.final
-        
+
         if (genus.2.flag==TRUE || species.2.flag==TRUE) {
             sp.string <- unlist(strsplit(sp.final, split= " "))
             if (genus.2.flag == TRUE) {
@@ -131,30 +131,30 @@ WFO.prepare <- function(
                     spec.data[i, "species.2"] <- sp.string[2]
                     if (verbose == TRUE) {message(paste("Short second part of name detected for: ", sp.final, sep=""))}
                 }
-            }                
+            }
         }
-        
+
         if (punctuation.flag==TRUE) {
-        
-# first remove the trinomials since these contain punctuation marks! 
+
+# first remove the trinomials since these contain punctuation marks!
             sp.final1 <- tolower(sp.final)
             for (j in 1:length(trinomial)) {
-                sp.final1 <- gsub(pattern=trinomial[j], replacement="", x=sp.final1)            
-            } 
-        
+                sp.final1 <- gsub(pattern=trinomial[j], replacement="", x=sp.final1)
+            }
+
             if (grepl(pattern="[[:punct:]]", x=sp.final1) == TRUE) {
                 spec.data[i, "punctuation"] <- as.logical(1)
                 if (verbose == TRUE) {message(paste("Punctuation mark detected for: ", sp.final, sep=""))}
             }
         }
-        
+
         if (pointless.flag==TRUE) {
             sp.final1 <- tolower(sp.final)
 
-# first remove the trinomials since these contain punctuation marks!            
+# first remove the trinomials since these contain punctuation marks!
             for (j in 1:length(trinomial)) {
                 if (trinomial[j] != "f.") {sp.final1 <- gsub(pattern=trinomial[j], replacement="", x=sp.final1)}
-            }            
+            }
 
             for (j in 1:length(sub.pattern)) {
                 sub1 <- gsub(pattern="[[:punct:]]", replacement="", x=sub.pattern[j])
@@ -163,15 +163,15 @@ WFO.prepare <- function(
                     spec.data[i, "pointless"] <- as.logical(1)
                     if (verbose == TRUE) {message(paste("Subpattern without punctuation mark ('", sub1, "') detected for: ", sp.final, sep=""))}
                 }
-            }                
+            }
         }
-        
+
     }
-    
+
     if (all.equal(spec.data$Authorship, rep("", nrow(spec.data))) == TRUE) {
         spec.data <- spec.data[, -which(names(spec.data) == "Authorship")]
     }
-    
+
     return(spec.data)
 }
 

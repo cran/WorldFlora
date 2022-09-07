@@ -20,7 +20,7 @@ WFO.match <- function(
     verbose=TRUE, counter=1000
 )
 {
-    if (class(spec.data) == "character") {spec.data <- data.frame(spec.name = spec.data)}
+    if (class(spec.data) %in% c("data.frame") == FALSE) {spec.data <- data.frame(spec.name = spec.data)}
     if (is.factor(spec.data) == TRUE) {spec.data <- data.frame(spec.name = spec.data)}
 
     if (! requireNamespace("data.table")) {stop("Please install the data.table package")}
