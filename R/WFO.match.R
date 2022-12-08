@@ -23,8 +23,8 @@ WFO.match <- function(
     # Check that data.table is installed
     if (! requireNamespace("data.table")) {stop("Please install the data.table package")}
 
-    # Check whether spec.data is a data.table or a data.frame
-    if ((!data.table::is.data.table(spec.data)) & (!is.data.frame(spec.data))) {spec.data <- data.frame(spec.name = spec.data)}
+    # Convert spec.data to a data.frame if it is a data.table of if it not a data.frame
+    if ((data.table::is.data.table(spec.data)) | (!is.data.frame(spec.data))) {spec.data <- data.frame(spec.name = spec.data)}
     
     if (is.factor(spec.data) == TRUE) {spec.data <- data.frame(spec.name = spec.data)}
 

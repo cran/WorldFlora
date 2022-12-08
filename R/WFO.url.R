@@ -5,8 +5,8 @@ WFO.url <- function(
 	# Check that data.table is installed
     if (! requireNamespace("data.table")) {stop("Please install the data.table package")}
 
-    # Check whether spec.data is a data.table or a data.frame
-    if ((!data.table::is.data.table(WFO.result)) & (!is.data.frame(WFO.result))) {WFO.result <- data.frame(taxonID = WFO.result)}
+    # Convert WFO.result to a data.frame if it is a data.table of if it not a data.frame
+    if ((data.table::is.data.table(WFO.result)) & (!is.data.frame(WFO.result))) {WFO.result <- data.frame(taxonID = WFO.result)}
     if (is.factor(WFO.result) == TRUE) {WFO.result <- data.frame(taxonID = WFO.result)}
 
     result <- as.character(NA, length=nrow(WFO.result))
