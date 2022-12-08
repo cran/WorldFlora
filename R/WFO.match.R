@@ -58,7 +58,7 @@ WFO.match <- function(
             WFO.names <- c(WFO.names, "New.accepted", "Old.status", "Old.ID", "Old.name")
         }
     }
-    for (i in 1:length(WFO.names)) {
+    for (i in seq_along(WFO.names)) {
         if (WFO.names[i] %in% names(spec.data)) {
             message(paste("Original data set variable '", WFO.names[i], "' replaced by variable '", WFO.names[i], ".ORIG'", sep=""))
             names(spec.data)[names(spec.data) == WFO.names[i]] <- paste(WFO.names[i], ".ORIG", sep="")
@@ -95,7 +95,7 @@ WFO.match <- function(
                 spec.name.ORIG <- paste(spec.name, ".ORIG", sep="")
                 spec.data[, spec.name.ORIG] <- spec.data[, spec.name]
             }
-            for (i in 1:length(sub.pattern)) {
+            for (i in seq_along(sub.pattern)) {
                 spec.data[, spec.name] <- gsub(pattern=sub.pattern[i], replacement="", x=spec.data[, spec.name])
             }
         }
@@ -253,7 +253,7 @@ WFO.match <- function(
 
                     if (spec.data[i, "Fuzzy.two"] == TRUE && spec.data[i, "Fuzzy.one"] == FALSE) {
                         specFuzzy.2 <- NULL
-                        for (j in 1:length(specFuzzy)) {
+                        for (j in seq_along(specFuzzy)) {
                             species.string3 <- unlist(strsplit(specFuzzy[j], split= " "))
                             if (length(species.string3) < 3) {specFuzzy.2 <- c(specFuzzy.2, specFuzzy[j])}
                         }
@@ -265,7 +265,7 @@ WFO.match <- function(
 
                     if (spec.data[i, "Fuzzy.one"] == TRUE) {
                         specFuzzy.2 <- NULL
-                        for (j in 1:length(specFuzzy)) {
+                        for (j in seq_along(specFuzzy)) {
                             species.string3 <- unlist(strsplit(specFuzzy[j], split= " "))
                             if (length(species.string3) < 2) {specFuzzy.2 <- c(specFuzzy.2, specFuzzy[j])}
                         }
@@ -301,7 +301,7 @@ WFO.match <- function(
                         specFuzzy <- specFuzzy[found.diff == min(found.diff)]
                         if (verbose == TRUE) {message(paste("Shortest fuzzy matches for ", spec.data[i, spec.name], "were: ", paste(specFuzzy, collapse=", ")))}
                     }
-                    for (j in 1:length(specFuzzy)) {
+                    for (j in seq_along(specFuzzy)) {
                         WFO.match1 <- WFO.data[WFO.data$scientificName==specFuzzy[j],]
                         if (j==1) {
                             WFO.match <- WFO.match1
