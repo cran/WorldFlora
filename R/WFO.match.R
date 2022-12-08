@@ -20,10 +20,13 @@ WFO.match <- function(
     verbose=TRUE, counter=1000
 )
 {
-    if (class(spec.data) %in% c("data.frame") == FALSE) {spec.data <- data.frame(spec.name = spec.data)}
-    if (is.factor(spec.data) == TRUE) {spec.data <- data.frame(spec.name = spec.data)}
-
+    # Check that data.table is installed
     if (! requireNamespace("data.table")) {stop("Please install the data.table package")}
+
+    # Check whether spec.data is a data.table or a data.frame
+    if ((!data.table::is.data.table(spec.data)) & (!is.data.frame(spec.data))) {spec.data <- data.frame(spec.name = spec.data)}
+    
+    if (is.factor(spec.data) == TRUE) {spec.data <- data.frame(spec.name = spec.data)}
 
     if (is.null(WFO.data) == TRUE) {
         message(paste("Reading WFO data"))

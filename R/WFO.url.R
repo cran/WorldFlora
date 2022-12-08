@@ -2,7 +2,11 @@ WFO.url <- function(
     WFO.result=NULL, browse=FALSE, browse.rows=c(1:1), ...
 )
 {
-    if (class(WFO.result) %in% c("data.frame") == FALSE) {WFO.result <- data.frame(taxonID = WFO.result)}
+	# Check that data.table is installed
+    if (! requireNamespace("data.table")) {stop("Please install the data.table package")}
+
+    # Check whether spec.data is a data.table or a data.frame
+    if ((!data.table::is.data.table(WFO.result)) & (!is.data.frame(WFO.result))) {WFO.result <- data.frame(taxonID = WFO.result)}
     if (is.factor(WFO.result) == TRUE) {WFO.result <- data.frame(taxonID = WFO.result)}
 
     result <- as.character(NA, length=nrow(WFO.result))
