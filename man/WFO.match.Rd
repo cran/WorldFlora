@@ -153,7 +153,11 @@ Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant n
     Applications in Plant Sciences 8(9): e11388
 }
 
-\author{Roeland Kindt (World Agroforestry)}
+\author{Roeland Kindt (World Agroforestry, CIFOR-ICRAF)}
+
+\seealso{
+\code{\link{WFO.match.fuzzyjoin}}
+}
 
 \examples{
 

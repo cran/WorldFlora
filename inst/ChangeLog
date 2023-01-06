@@ -4,7 +4,7 @@ WorldFlora versions
 	Note that a static copy of the Taxonomic Backbone data can be downloaded from:
 	<http://www.worldfloraonline.org/downloadData>. This can be done with function
 	WFO.download(). If the function fails to download the entire, manually download the zip
-	file and then use WFO.remember().  
+	file and then use WFO.remember().
 
 	The suggested citation of World Flora Online (WFO) is:
 	WFO ([Year]): World Flora Online. Version [Year].[Month]. Published on the Internet;
@@ -15,8 +15,26 @@ WorldFlora versions
 	against the World Flora Online taxonomic backbone data. Applications in Plant
 	Sciences 8(9): e11388.
 
-	Various examples of using WorldFlora are available via 
-	<https://rpubs.com/Roeland-KINDT> 
+	Various examples of using WorldFlora are available via
+	<https://rpubs.com/Roeland-KINDT>
+
+
+Version 1.12 (January 2023)
+
+  * A new function WFO.match.fuzzyjoin() was added that internally uses function
+  fuzzyjoin::stringdist_left_join(). For some data sets, this results in significant
+  improvement in speeds, particularly where a relative large number of records remain
+  that could not be directly matched. In addition, the new function allows for alternative
+  methods of calculating the fuzzy distance (via the internal fuzzyjoin function).
+
+  * Modified function WFO.match() to first use a subset of the WFO.data. Also direct
+  matching is now first done internally via dplyr::left_join(). These changes resulted
+  in some improvements in execution speeds, especially where many taxa could be directly
+  matched.
+
+  * Internally WFO.match() converts spec.data data.tables to the data.frame format.
+
+  * Corrected a new error in WFO.one() when no matches were found.
 
 
 Version 1.11 (September 2022)
@@ -25,6 +43,7 @@ Version 1.11 (September 2022)
 
 	* Changed author email from previous CGIAR.org domain (as a new CIFOR-ICRAF domain
 	will be created)
+
 
 Version 1.10 (December 2021)
 

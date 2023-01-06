@@ -29,7 +29,7 @@ new.backbone(x,
 \details{
 This function allows a user to create a new taxonomic backbone data set that is understood by WFO.match and WFO.one.
 
-Alternative examples with the Mammal Diversity Database (\url{https://www.mammaldiversity.org/}) and the World Checlist of Vascular Plants (\url{https://wcvp.science.kew.org/}) are provided in the Kindt 2021a,b RPubs.
+Alternative examples with the Mammal Diversity Database (\url{https://www.mammaldiversity.org/}) and the World Checlist of Vascular Plants (\url{https://powo.science.kew.org/about-wcvp}) are provided in the Kindt 2021a,b RPubs.
 }
 
 \value{

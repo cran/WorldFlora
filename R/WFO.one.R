@@ -136,10 +136,12 @@ WFO.one <- function(
 
     if (is.null(spec.name) == FALSE) {
         for (i in 1:nrow(WFO.new)) {
-            if (WFO.new[i, "scientificName"] == "") {
-                WFO.new[i, "scientificName"] <- WFO.new[i, spec.name]
-                WFO.new[i, "One.Reason"] <- "no match found"
-            }
+# update DEC-2022
+          if (is.na(WFO.new[i, "scientificName"])){WFO.new[i, "scientificName"] <- ""}
+          if (WFO.new[i, "scientificName"] == "") {
+              WFO.new[i, "scientificName"] <- WFO.new[i, spec.name]
+              WFO.new[i, "One.Reason"] <- "no match found"
+          }
         }
     }
 
