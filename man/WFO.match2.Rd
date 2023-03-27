@@ -51,6 +51,9 @@ An alternative and typically faster method of matching records than {\link[World
 \details{
 This function matches plant names by using the \code{\link[fuzzyjoin]{stringdist_left_join}} function internally. The results are provided in a similar formatto those from \code{\link[WorldFlora]{WFO.match}}; therefore the \code{\link[WorldFlora]{WFO.one}} function can be used in a next step of the analysis.
 
+For large data sets the function may fail due to memory limits. A solution is to analyse
+different subsets of large data, as for example shown by Kindt (2023).
+
 Column 'Unique' shows whether there was a unique match (or not match) in the WFO.
 
 Column 'Matched' shows whether there was a match in the WFO.
@@ -89,6 +92,11 @@ Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity 
 Kindt, R. 2020. WorldFlora: An R package for exact and fuzzy matching of plant names against
     the World Flora Online taxonomic backbone data.
     Applications in Plant Sciences 8(9): e11388
+
+Kindt, R. 2023. Standardizing tree species names of GlobalTreeSearch with WorldFlora while
+  testing the faster matching function of WFO.match.fuzzyjoin.
+   \url{https://rpubs.com/Roeland-KINDT/996500}
+
 }
 
 \author{Roeland Kindt (World Agroforestry, CIFOR-ICRAF)}

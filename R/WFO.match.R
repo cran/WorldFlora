@@ -253,7 +253,8 @@ WFO.match <- function(
         if (spec.data.i == "Labiatae") {WFO.match <- WFO.dat[WFO.dat$scientificName=="Lamiaceae", ]}
         if (spec.data.i == "Gramineae") {WFO.match <- WFO.dat[WFO.dat$scientificName=="Poaceae", ]}
 
-        } else if (nchar(spec.data.i) > 0) {
+# modified March 2023 not to attempt Fuzzy matching with Fuzzy <= 0
+        } else if (nchar(spec.data.i) > 0 && Fuzzy > 0) {
 #            WFO.match <- WFO.dat[WFO.dat$scientificName==spec.data.i,]
 
             if (Fuzzy > 0 || Fuzzy.force == TRUE) {
@@ -429,7 +430,8 @@ WFO.match <- function(
           if (spec.data.i == "Labiatae") {WFO.match <- WFO.dat[WFO.dat$scientificName=="Lamiaceae", ]}
           if (spec.data.i == "Gramineae") {WFO.match <- WFO.dat[WFO.dat$scientificName=="Poaceae", ]}
 
-        } else if (nchar(spec.data.i) > 0) {
+# modified March 2023 not to attempt Fuzzy matching with Fuzzy <= 0
+        } else if (nchar(spec.data.i) > 0 && Fuzzy > 0) {
 
           if (Fuzzy > 0 || Fuzzy.force == TRUE) {
             specFuzzy <- agrep(spec.data.i, x=WFO.dat$scientificName, value=T, max.distance=Fuzzy)

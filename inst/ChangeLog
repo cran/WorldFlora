@@ -19,6 +19,26 @@ WorldFlora versions
 	<https://rpubs.com/Roeland-KINDT>
 
 
+Version 1.13 (March 2023)
+
+  * A new function WFO.acceptable.match() that checks whether fuzzy matches could be a
+  result from differences in gender between submitted names and names in the taxonomic
+  backbone.
+
+  * Corrected an error in WFO.match() to correctly handle Fuzzy <= 0 to skip fuzzy
+  matching. (Corrected after the error was reported by Karina Banda.)
+
+  * Modified function WFO.download() to work with new format of the World Flora Online
+  backbone data file of 'classification.csv'. A timeout argument was added also.
+  
+  * Modified function WFO.download() to explicitly use the argument 'save.dir'.
+  (Suggested by Nicolas Casajus, 24-MAR-2023).
+
+  * Included a link to an application of WFO.match.fuzzyjoin() with a large data set from
+  GlobalTreeSearch, especially to show how large data sets can be handled.
+  <https://rpubs.com/Roeland-KINDT/996500>
+
+
 Version 1.12 (January 2023)
 
   * A new function WFO.match.fuzzyjoin() was added that internally uses function

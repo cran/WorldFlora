@@ -10,9 +10,10 @@ The function remembers where the Taxonomic Backbone data was downloaded to. In c
 
 \usage{
 
-    WFO.download(WFO.url = 
+    WFO.download(WFO.url =
       "http://104.198.143.165/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip",
-    save.dir = getwd(), WFO.remember = TRUE, ...)
+    save.dir = getwd(), WFO.remember = TRUE,
+    timeout = 500, ...)
 
     WFO.remember(WFO.file = NULL, WFO.data = "WFO.data", WFO.pos = 1)
 
@@ -24,8 +25,9 @@ The function remembers where the Taxonomic Backbone data was downloaded to. In c
     \item{WFO.url}{ Hyperlink to the download from the World Flora Online. }
     \item{save.dir}{ Directory where the file will be downloaded and unzipped.}
     \item{WFO.remember}{ Remember the location of the file for \code{WFO.remember}. }
-    \item{...}{ Other arguments for {\link[utils]{download.file}}. } 
-  
+    \item{timeout}{ Timeout in seconds for some internet operations, to be modified among Options Settings. }
+    \item{...}{ Other arguments for {\link[utils]{download.file}}. }
+
     \item{WFO.file}{ File path to the Taxonomic Backbone data ('classification.txt'). }
     \item{WFO.data}{ Name of data set to be used by other WorldFlora functions.}
     \item{WFO.pos}{ Argument pos as in {\link[base]{assign}}. }
