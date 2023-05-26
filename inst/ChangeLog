@@ -19,6 +19,14 @@ WorldFlora versions
 	<https://rpubs.com/Roeland-KINDT>
 
 
+Version 1.13-2 (May 2023)
+
+  * Modified function WFO.download() to change the default location of the taxonomic
+  backbone data set to its new URL:
+  https://files.worldfloraonline.org/files/WFO_Backbone/
+  _WFOCompleteBackbone/WFO_Backbone.zip
+  
+
 Version 1.13 (March 2023)
 
   * A new function WFO.acceptable.match() that checks whether fuzzy matches could be a

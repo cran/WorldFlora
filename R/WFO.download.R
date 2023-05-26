@@ -1,5 +1,6 @@
 WFO.download <- function(
-    WFO.url="http://104.198.143.165/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip",
+    WFO.url=paste0("https://files.worldfloraonline.org/files/WFO_Backbone/",
+                   "_WFOCompleteBackbone/WFO_Backbone.zip"),
     save.dir=getwd(), WFO.remember=TRUE, timeout=500, ...
 )
 {

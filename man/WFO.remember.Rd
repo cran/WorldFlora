@@ -9,15 +9,13 @@ The function remembers where the Taxonomic Backbone data was downloaded to. In c
 }
 
 \usage{
-
     WFO.download(WFO.url =
-      "http://104.198.143.165/files/WFO_Backbone/_WFOCompleteBackbone/WFO_Backbone.zip",
+      paste0("https://files.worldfloraonline.org/files/WFO_Backbone/",
+             "_WFOCompleteBackbone/WFO_Backbone.zip"),
     save.dir = getwd(), WFO.remember = TRUE,
     timeout = 500, ...)
 
     WFO.remember(WFO.file = NULL, WFO.data = "WFO.data", WFO.pos = 1)
-
-
 }
 
 \arguments{
