@@ -2,8 +2,8 @@ Package: WorldFlora
 Type: Package
 Title: Standardize Plant Names According to World Flora Online
         Taxonomic Backbone
-Version: 1.13-2
-Date: 2023-5-26
+Version: 1.14-1
+Date: 2024-1-1
 Author: Roeland Kindt [cre, aut] (<https://orcid.org/0000-0002-7672-0712>)
 Authors@R: 
     c(person(given = "Roeland",
@@ -12,11 +12,11 @@ Authors@R:
              email = "RoelandCEKindt@gmail.com",
              comment = c(ORCID = "0000-0002-7672-0712")))
 Maintainer: Roeland Kindt <RoelandCEKindt@gmail.com>
-Description: World Flora Online is an online flora of all known plants, available from <http://www.worldfloraonline.org/>. Methods are provided of matching a list of plant names (scientific names, taxonomic names, botanical names) against a static copy of the World Flora Online Taxonomic Backbone data that can be downloaded from the World Flora Online website. The World Flora Online Taxonomic Backbone is an updated version of The Plant List (<http://www.theplantlist.org/>), a working list of plant names that has become static since 2013.
+Description: World Flora Online is an online flora of all known plants, available from <https://www.worldfloraonline.org/>. Methods are provided of matching a list of plant names (scientific names, taxonomic names, botanical names) against a static copy of the World Flora Online Taxonomic Backbone data that can be downloaded from the World Flora Online website. The World Flora Online Taxonomic Backbone is an updated version of The Plant List (<http://www.theplantlist.org/>), a working list of plant names that has become static since 2013.
 License: GPL-3
 Depends: R (>= 3.5.0)
 Suggests: data.table, utils, stringr, dplyr, fuzzyjoin, stringdist
-Packaged: 2023-05-26 06:36:11 UTC; RKINDT
+Packaged: 2024-01-09 07:42:08 UTC; RKINDT
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2023-05-26 07:20:02 UTC
+Date/Publication: 2024-01-09 11:50:09 UTC

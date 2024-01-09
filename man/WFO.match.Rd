@@ -9,7 +9,7 @@
 \title{Standardize plant names according to World Flora Online taxonomic backbone}
 
 \description{
-This package checks a list of species against the World Flora Online (WFO) taxonomic backbone. The user needs to first download a static copy of the Taxonomic Backbone data from \url{http://www.worldfloraonline.org/downloadData}.
+This package checks a list of taxa (typically species) against the World Flora Online (WFO) taxonomic backbone. The user needs to first download a static copy of the Taxonomic Backbone data from \url{https://www.worldfloraonline.org} or \url{https://zenodo.org/doi/10.5281/zenodo.7460141}  (_DwC_backbone_R.zip).
 }
 
 \usage{
@@ -125,7 +125,7 @@ Column 'Old.name' gives the name of the first match with the non-blank acceptedN
 
 The function was inspired on the \code{Taxonstand} package that matches plant names against The Plant List. Note that The Plant List has been static since 2013, but was used as the starting point for the Taxonomic Backbone of the World Flora Online.
 
-Function \code{WFO.one} finds one unique matching name for each submitted name. Via \code{priority = "Accepted"}, it first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Via \code{priority = "Synonym"}, it first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. When a \code{spec.name} is given to \code{WFO.one}, the original submitted name is inserted for the code{scientificName}.
+Function \code{WFO.one} finds one unique matching name for each submitted name. Via \code{priority = "Accepted"}, it first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Via \code{priority = "Synonym"}, it first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. When a \code{spec.name} is given to \code{WFO.one}, the original submitted name is inserted for the \code{scientificName}.
 
 When the user specifies the column with the \code{Auth.dist}, documenting the Levenshtein
 distance between the submitted and matched authorities, then \code{WFO.one} first prioritizes records with best match between Authorities.
@@ -143,7 +143,7 @@ The main function returns a data.set with the matched species details from the W
 
 \references{
 World Flora Online. An Online Flora of All Known Plants.
-    \url{http://www.worldfloraonline.org}
+    \url{https://www.worldfloraonline.org}
 
 Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity era.
     Methods in Ecology and Evolution 7: 1217-1225.
@@ -206,7 +206,7 @@ library(Taxonstand)
 data(bryophytes)
 
 # Give the file with the static copy of the Taxonomic Backbone data ('classification.txt')
-# that was downloaded from \url{http://www.worldfloraonline.org/downloadData}.
+# that was downloaded from \url{https://www.worldfloraonline.org/downloadData}.
 # Possibly first use unzip(file.choose()) for the downloaded WFO_Backbone.zip
 WFO.file.RK <- file.choose()
 

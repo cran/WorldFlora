@@ -23,7 +23,34 @@ The function checks whether submitted and match names only differ by ending by -
 }
 
 \details{
-The function was especially developed to check for changes in gender notations.
+The function was initially developed to check for changes in gender notations.
+
+In new versions, also the following differences in species names are judged to be acceptable:
+
+- hybrid and non-hybrid names (eg, Sorbus avonensis - Sorbus xavonensis)
+
+- i vs. j (eg, Syzygium naiadum - Syzygium najadum)
+
+- tt vs. t (eg, Ficus scott-elliottii - Ficus scott-elliotii)
+
+- ll vs. l (eg, Garcinia moseleyana - Garcinia moselleyana)
+
+- rr vs. r (eg, Hymenodictyon perrieri - Hymenodictyon perieri)
+
+- mm vs. m (eg, Monteverdia schummaniana - Monteverdia schumanniana)
+
+- nn vs. n (eg, Pyrus tamamschiannae - Pyrus tamamschianae)
+
+- ff vs. f (eg, Dendropanax langsdorfii - Dendropanax langsdorffii)
+
+- hh vs. h (eg, Gmelina leichardtii - Gmelina leichhardtii)
+
+- dd vs. d (eg, Miconia buddlejoides - Miconia budlejoides)
+
+- is vs. e (eg, Decarydendron ranomafanensis - Decarydendron ranomafanense)
+
+- dt vs. d (eg, Stadtmannia acuminata - Stadmania acuminata)
+
 }
 
 \value{
@@ -33,6 +60,8 @@ The function returns a logical vector that indicates whether names could be acce
 \author{Roeland Kindt (World Agroforestry)}
 
 \examples{
+
+\dontrun{
 
 data(WFO.example)
 
@@ -52,7 +81,6 @@ WFO.acceptable.match(match1)
 # ignore differences in vowels
 WFO.acceptable.match(match1, no.vowels=TRUE)
 
-\dontrun{
 accepted.cases <- WFO.acceptable.match(match1, no.vowels=TRUE)
 match1.accepted <- match1[accepted.cases == TRUE, ]
 match1.notaccepted <- match1[accepted.cases == FALSE, ]

@@ -19,6 +19,17 @@ WorldFlora versions
 	<https://rpubs.com/Roeland-KINDT>
 
 
+
+Version 1.14-1 (January 2024)
+
+  * Modified function WFO.acceptable.match() to deal with a larger set of acceptable
+  differences such as -is vs. -e, *dd* vs *d* and hybrid vs. non-hybrid names
+
+  * Modified function new.backbone() to deal with self-references in the
+  'acceptedNameUsageID' field. This change was implemented to deal with changes in the
+  WCVP version 11.
+
+
 Version 1.13-2 (May 2023)
 
   * Modified function WFO.download() to change the default location of the taxonomic

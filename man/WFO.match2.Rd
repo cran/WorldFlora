@@ -84,7 +84,7 @@ The main function returns a data.set with the matched species details from the W
 
 \references{
 World Flora Online. An Online Flora of All Known Plants.
-    \url{http://www.worldfloraonline.org}
+    \url{https://www.worldfloraonline.org}
 
 Sigovini M, Keppel E, Tagliapietra. 2016. Open Nomenclature in the biodiversity era.
     Methods in Ecology and Evolution 7: 1217-1225.
