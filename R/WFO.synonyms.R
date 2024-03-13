@@ -10,7 +10,14 @@ WFO.synonyms <- function(
 # if nothing provided, then give list of all the families
 
     WFO.found <- WFO.one(WFO.match(taxon, WFO.file=NULL, WFO.data=WFO.data, ...))
-    if (nrow(WFO.found) == 0) {stop("no matches found")}
+    if (nrow(WFO.found) == 0) {
+      message("no matches found")
+      return(NULL)
+    }
+    if (WFO.found$taxonID == "") {
+      message("no matches found")
+      return(NULL)
+    }
 
     WFO.found <- WFO.found[, c("taxonID", "scientificName", "scientificNameAuthorship", "taxonRank", "taxonomicStatus", "acceptedNameUsageID")]  
 

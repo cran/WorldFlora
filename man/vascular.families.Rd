@@ -3,7 +3,7 @@
 \docType{data}
 \title{Orders and Higher Level Classifications of Vascular Plants}
 \description{
-This data set lists orders for families of vascular plants (angiosperms, gymnosperms and pteridophytes). For angiosperms, information from orders and higher levels of classification correspond to the fourth update of the Angiosperm Phylogeny Group (APG IV, \doi{10.1111/boj.12385}). Higher levels of classification correspond to names of nodes of the consensus tree (Figure 1 in \doi{10.1111/boj.12385}). Orders for gymnosperms and pteridophytes were obtained from \url{http://www.mobot.org/MOBOT/research/APweb/}.
+This data set lists orders for families of vascular plants (angiosperms, gymnosperms and pteridophytes). For angiosperms, information from orders and higher levels of classification correspond to the fourth update of the Angiosperm Phylogeny Group (APG IV, \doi{10.1111/boj.12385}). Higher levels of classification correspond to names of nodes of the consensus tree (Figure 1 in \doi{10.1111/boj.12385}). Orders for gymnosperms and pteridophytes were obtained from the website of Missouri Botanical Garden.
 }
 
 \usage{data(vascular.families)}

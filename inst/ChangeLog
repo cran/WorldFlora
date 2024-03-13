@@ -20,6 +20,18 @@ WorldFlora versions
 
 
 
+Version 1.14-2
+
+  * New function WFO.preprepare() to deal with situations where authorities are provided
+  at different taxonimic levels.
+  
+  * New argument of 'authors.ending.f' for WFO.prepare() to deal with situations where
+  the name of the author ends with ' f.'.
+  
+  * Modified function WFO.synonyms() to deal with situations where the accepted name
+  of a species is not found (error reported by Jason Best on 18-JAN-24)
+
+
 Version 1.14-1 (January 2024)
 
   * Modified function WFO.acceptable.match() to deal with a larger set of acceptable
