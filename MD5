@@ -1,4 +1,4 @@
-d2ae8fedd0f200ce3c01e62460b0803f *DESCRIPTION
+843e53bcc764d015e5b14ec7ae55f7ef *DESCRIPTION
 0964579c7055248cefb2d52f49a8c754 *NAMESPACE
 41bb6d5a092cbd3fdf75b04df4da4d93 *R/WFO.acceptable.match.R
 36d5e4cef5dd99c8d6d317dadde41b27 *R/WFO.browse.R
@@ -7,7 +7,7 @@ a201885774fbac104c6f971596530e72 *R/WFO.download.R
 e0e9245877fd9c49b1c5fd734c2c22b9 *R/WFO.match.R
 5153b461a5d28dbbe3f4c951b5ace374 *R/WFO.match2.R
 72cd89939c458d236e21fe738c00154e *R/WFO.one.R
-f79802cb89984790ee395187dc4328e2 *R/WFO.prepare.R
+3aeab274351562a9648ac50456aced0a *R/WFO.prepare.R
 4ace2b9d89fde63b30f7bc177e67886f *R/WFO.remember.R
 23c69e5b820059aa5f6354ea29cab763 *R/WFO.synonyms.R
 58a6517bd0366f97d833d83691dfebb3 *R/WFO.url.R
@@ -17,7 +17,7 @@ afbe4209b3bb961ba3e41cbfe79ea507 *build/partial.rdb
 c071e80418e1326168473ea17c37b963 *data/WFO.example.RData
 fa0096cfe08a6f18bcc299865e7ca684 *data/vascular.families.RData
 524f554129a18afae434cb6066052bea *inst/CITATION
-c551f1257e5504c4d9b55588c7453a2d *inst/ChangeLog
+2c32576f909a207272778e5e92f5dcff *inst/ChangeLog
 7096e35441e3cbecc14652162a138ed2 *inst/etc/WFO.example.xlsx
 9260967494f43fd8c5ea3d3380d074c6 *man/WFO.acceptable.match.Rd
 70a5122ed8421b4cf39edc976b942c4d *man/WFO.example.Rd

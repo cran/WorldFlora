@@ -20,10 +20,16 @@ WorldFlora versions
 
 
 
-Version 1.14-2
+Version 1.14-3 (May 2024)
+
+  * Corrected error in WFO.prepare and WFO.preprepare() to deal with situations where the
+  submitted taxon name was not in a variable named 'spec.full'.
+
+
+Version 1.14-2 (March 2024)
 
   * New function WFO.preprepare() to deal with situations where authorities are provided
-  at different taxonimic levels.
+  at different taxonomic levels.
   
   * New argument of 'authors.ending.f' for WFO.prepare() to deal with situations where
   the name of the author ends with ' f.'.

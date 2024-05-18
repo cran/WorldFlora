@@ -43,9 +43,9 @@ WFO.prepare <- function(
                                  replacement=authors.ending.nof)
     
     for (i in 1:nrow(authors.ending)) {
-      spec.data$spec.full <- gsub(pattern=authors.ending[i, "pattern"],
+      spec.data[, spec.full] <- gsub(pattern=authors.ending[i, "pattern"],
                                   replacement=authors.ending[i, "replacement"],
-                                  x=spec.data$spec.full)
+                                  x=spec.data[, spec.full])
     }
     
     
@@ -195,9 +195,9 @@ WFO.prepare <- function(
     }
 
     for (i in 1:nrow(authors.ending)) {
-      spec.data$spec.full <- gsub(pattern=authors.ending[i, "replacement"],
+      spec.data[, spec.full] <- gsub(pattern=authors.ending[i, "replacement"],
                                   replacement=authors.ending[i, "pattern"],
-                                  x=spec.data$spec.full)
+                                  x=spec.data[, spec.full])
       spec.data$spec.name <- gsub(pattern=authors.ending[i, "replacement"],
                                   replacement=authors.ending[i, "pattern"],
                                   x=spec.data$spec.name)
@@ -234,15 +234,15 @@ WFO.preprepare <- function(
   } 
 
 # inspired also by https://www.youtube.com/watch?v=DiY8EqZDwoI    
-  spec.data$first <- stringr::str_detect(spec.data$spec.full,
+  spec.data$first <- stringr::str_detect(spec.data[, spec.full],
                                          pattern=paste0(" ", infra1, " "))
 
-  spec.data$split.before <- spec.data$spec.full
+  spec.data$split.before <- spec.data[, spec.full]
   spec.data[spec.data$first == TRUE, "split.before"] <- stringr::str_match(spec.data[spec.data$first == TRUE, "spec.full"],
                                                                                      pattern=paste0("(.*)\\s", infra1, "\\s"))[, 2]
   
   # no need to have the infravar detected, can be empty
-  spec.data$split.after <- stringr::str_match(spec.data$spec.full,
+  spec.data$split.after <- stringr::str_match(spec.data[, spec.full],
                                               pattern=paste0("\\s", infra1, "\\s(.*)"))[, 2]
   
   # but then need to precede with the infravar pattern if detected

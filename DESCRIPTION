@@ -2,8 +2,8 @@ Package: WorldFlora
 Type: Package
 Title: Standardize Plant Names According to World Flora Online
         Taxonomic Backbone
-Version: 1.14-2
-Date: 2024-3-13
+Version: 1.14-3
+Date: 2024-5-17
 Author: Roeland Kindt [cre, aut] (<https://orcid.org/0000-0002-7672-0712>)
 Authors@R: 
     c(person(given = "Roeland",
@@ -16,7 +16,7 @@ Description: World Flora Online is an online flora of all known plants, availabl
 License: GPL-3
 Depends: R (>= 3.5.0)
 Suggests: data.table, utils, stringr, dplyr, fuzzyjoin, stringdist
-Packaged: 2024-03-13 10:01:40 UTC; RKINDT
+Packaged: 2024-05-17 06:04:24 UTC; RKINDT
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2024-03-13 11:10:05 UTC
+Date/Publication: 2024-05-18 13:40:02 UTC
