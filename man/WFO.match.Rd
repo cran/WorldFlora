@@ -41,7 +41,7 @@ This package checks a list of taxa (typically species) against the World Flora O
     WFO.url(WFO.result = NULL, browse = FALSE, browse.rows = c(1:1), ...)
 
     WFO.one(WFO.result = NULL, priority = "Accepted",
-        spec.name = NULL, Auth.dist = NULL, First.dist = NULL,
+        spec.name = NULL, Auth.dist = NULL, Old.author.dist=NULL, First.dist = NULL,
         verbose = TRUE, counter = 1000)
 
     WFO.browse(taxon, WFO.file = NULL, WFO.data = NULL,
@@ -90,7 +90,7 @@ This package checks a list of taxa (typically species) against the World Flora O
 
   \item{priority}{ Method of selecting the 1-to-1 matches. Option \code{Accepted} first limits candidates to accepted names, with a possible second step of eliminating accepted names that are synonyms. Option \code{Synonym} first limits candidates to those that are not synonyms, with a possible second step of eliminating names that are not accepted. When the number of matches is larger than one after these steps, a third algorithm picks the candidate with the smallest \code{taxonID}. }
   \item{Auth.dist}{ In case that the name of the variable with the Levenshtein distance between the authorship names is provided, then the algorithm first prioritizes records with the best match between the submitted and matched author names. }
-
+  \item{Old.author.dist}{ In case that the name of the variable with the Levenshtein distance between the authorship names for the synonym matches is provided, then the algorithm first prioritizes records with the best match between the submitted and matched author names. }
   \item{taxon}{ Character string with the name of the taxon for which information will be given (for families, different genera; for genera, different specieds; for species, infraspecific levels). }
   \item{accepted.only}{ If \code{TRUE}, then only provide taxa with accepted names. }
 

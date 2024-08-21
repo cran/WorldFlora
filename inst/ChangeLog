@@ -19,6 +19,10 @@ WorldFlora versions
 	<https://rpubs.com/Roeland-KINDT>
 
 
+Version 1.14-4 (August 2024)
+
+  * Updated function WFO.one() to check the Authorship distance with synonym matches first,
+  then to check for the Authorship distance with the final match.
 
 Version 1.14-3 (May 2024)
 
