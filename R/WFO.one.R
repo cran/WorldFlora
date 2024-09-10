@@ -35,7 +35,7 @@ WFO.one <- function(
   }
   
   WFO.cases <- unique(WFO.result[, "OriSeq"])
-  
+
   for (i in 1:length(WFO.cases)) {
     
     if (round(i/counter, 0) == i/counter) {message(paste("Reached case # ", i, sep=""))}
@@ -50,11 +50,10 @@ WFO.one <- function(
       if (length(Old.author.dist) > 0) {
         # Check for synonym matches first, August 2024              
         if (Old.author.dist %in% names(WFO.result)) {
-          min.dist <- min(as.numeric(WFO.case[, Old.author.dist]), na.rm=TRUE)
-          
-          print(min.dist)                    
-          
-          if (is.na(min.dist) == FALSE  && min.dist != Inf) {
+          suppressWarnings(min.dist <- min(as.numeric(WFO.case[WFO.case$New.accepted == TRUE, Old.author.dist]), na.rm=TRUE))
+          suppressWarnings(min.dist.nosyn <- min(as.numeric(WFO.case[WFO.case$New.accepted == FALSE, Auth.dist]), na.rm=TRUE))
+
+          if (is.na(min.dist) == FALSE  && min.dist != Inf  && min.dist < min.dist.nosyn) {
             onereason <- "Authorship best match for synonym"
             WFO.case2 <- WFO.case[WFO.case[, Old.author.dist] == min.dist, , drop=F]
             if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best Authorship match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
@@ -63,23 +62,19 @@ WFO.one <- function(
         }
       }
       
-      print(WFO.case)             
-      
       if (length(Auth.dist) > 0  && nrow(WFO.case) > 1) {          
         
         if (Auth.dist %in% names(WFO.result) && nrow(WFO.case) > 1) {
-          min.dist <- min(as.numeric(WFO.case[, Auth.dist]), na.rm=TRUE)
+          suppressWarnings(min.dist <- min(as.numeric(WFO.case[WFO.case$New.accepted == FALSE, Auth.dist]), na.rm=TRUE))
           if (is.na(min.dist) == FALSE && min.dist != Inf) {
             onereason <- "Authorship best match"
-            WFO.case2 <- WFO.case[WFO.case[, Auth.dist] == min.dist, , drop=F]
+            WFO.case2 <- WFO.case[WFO.case[WFO.case$New.accepted == FALSE, Auth.dist] == min.dist, , drop=F]
             if (nrow(WFO.case2) == 1) {if (verbose == T) {message(paste("Found unique best Authorship match case for record # ", WFO.case[1, "OriSeq"], sep=""))}}
             WFO.case <- WFO.case2
           }
         }
       }
-      
-      print(WFO.case)          
-      
+
       if (length(First.dist) > 0  && nrow(WFO.case) > 1) {
         if (First.dist %in% names(WFO.result)) {
           min.dist <- min(as.numeric(WFO.case[, First.dist]), na.rm=TRUE)
